@@ -3,7 +3,7 @@
 以开源项目与个人展示为主的中文网站。Astro + TypeScript，部署到 **https://binbinku.github.io/BKSite/**。
 
 - `/BKSite/`：全屏沉浸式作品入口，循环展示六个 GitHub 置顶项目；点击展示区进入主页。
-- `/BKSite/blog/`：内容主页，重点展示项目和个人介绍，底部保留少量笔记入口。
+- `/BKSite/blog/`：三栏内容主页：左侧个人信息，中间 GitHub 置顶项目，右侧最近文章列表。平板采用两栏，手机按个人、项目、文章顺序纵向排列。
 - `/BKSite/projects/`、`/BKSite/about/`：项目与个人详细介绍。
 - `/BKSite/writing/`：笔记归档；既有文章仍使用 `/BKSite/blog/<slug>/`，原有文章链接不变。
 

@@ -9,9 +9,24 @@ const posts = await getPosts();
 ---
 <Base title="主页" active="home">
   <div class="container hub-page">
-    <section class="hub-intro section-frame"><p class="eyebrow"><span class="status-dot"></span> {profile.role} / INDEPENDENT BUILDER</p><h1>你好，我是 BK。<br /><span>把日常问题，做成实用工具。</span></h1><p>{profile.introduction}</p><div class="hero-buttons"><a class="button button-primary" href={href('projects/')}>探索我的项目 <span>↗</span></a><a class="button button-secondary" href={href('about/')}>关于我 <span>→</span></a></div><a class="showreel-link" href={href()}>↖ 再看一次作品放映</a></section>
-    <section class="hub-projects section-frame" aria-labelledby="projects-title"><div class="section-heading"><div><p class="eyebrow">01 / PINNED ON GITHUB</p><h2 id="projects-title">构建有用的东西。</h2><p class="section-description">我的 GitHub 置顶项目，从桌面效率到设备与图形开发。</p></div><a class="section-link" href={`${profile.github}?tab=repositories`} target="_blank" rel="noopener noreferrer">GitHub <span>↗</span></a></div><div class="project-grid">{projects.map((project, index) => <ProjectCard project={project} index={index}/>)}</div></section>
-    <section class="about-strip section-frame"><div><span class="eyebrow">02 / THE PERSON BEHIND THE PROJECTS</span><h2>从一个小问题开始。<br /><span>用代码，试着给出答案。</span></h2><p>关注工具本身，也关注使用工具的人。从项目管理、窗口切换到设备监测，开源是我分享探索的一种方式。</p><a class="story-link" href={href('about/')}>更多关于我 →</a></div><div class="identity-panel"><img src={profile.avatar} alt="BK 的 GitHub 头像" width="72" height="72"/><strong>{profile.name}</strong><span>@{profile.handle}</span><p>{profile.role}</p><a href={profile.github} target="_blank" rel="noopener noreferrer"><Icon name="github" size={16}/> GitHub ↗</a></div></section>
-    <section class="notes-section section-frame" aria-labelledby="notes-title"><div class="section-heading"><div><p class="eyebrow">03 / OCCASIONAL NOTES</p><h2 id="notes-title">偶尔，也写一点。</h2></div><a class="section-link" href={href('writing/')}>全部笔记 <span>↗</span></a></div>{posts.length ? <div class="notes-list">{posts.slice(0, 2).map(post => <a href={postHref(post.id)}><time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time><span>{post.data.title}</span><span>↗</span></a>)}</div> : <p class="empty-state">项目在更新，笔记慢慢写。</p>}</section>
+    <aside class="hub-profile" aria-labelledby="profile-name">
+      <p class="eyebrow">THE BUILDER</p>
+      <img class="hub-avatar" src={profile.avatar} alt="BK 的 GitHub 头像" width="96" height="96" />
+      <h1 id="profile-name">{profile.name}</h1>
+      <p class="hub-handle">@{profile.handle}</p>
+      <p class="hub-role"><span class="status-dot"></span>{profile.role}</p>
+      <p class="hub-bio">{profile.introduction}</p>
+      <a class="button button-secondary hub-github" href={profile.github} target="_blank" rel="noopener noreferrer"><Icon name="github" size={16}/>GitHub<span>↗</span></a>
+      <div class="hub-profile-links"><a href={href('about/')}>更多关于我 <span>→</span></a><a href={href()}>作品放映 <span>↗</span></a></div>
+    </aside>
+    <section class="hub-main" aria-labelledby="projects-title">
+      <header class="hub-heading"><p class="eyebrow">PINNED ON GITHUB</p><div><h2 id="projects-title">开源项目</h2><a class="section-link" href={href('projects/')}>全部项目 <span>↗</span></a></div><p>把日常问题，做成实用工具。</p></header>
+      <div class="project-grid">{projects.map((project, index) => <ProjectCard project={project} index={index}/>)}</div>
+    </section>
+    <aside class="hub-articles" aria-labelledby="notes-title">
+      <header class="hub-heading"><p class="eyebrow">NOTES & IDEAS</p><h2 id="notes-title">文章列表</h2><p>偶尔记录，也持续探索。</p></header>
+      {posts.length ? <ol class="hub-article-list">{posts.slice(0, 6).map(post => <li><a href={postHref(post.id)}><time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time><h3>{post.data.title}</h3><p>{post.data.description}</p><span class="hub-read">阅读全文 <span>↗</span></span></a></li>)}</ol> : <p class="empty-state">项目在更新，笔记慢慢写。</p>}
+      <a class="section-link hub-archive" href={href('writing/')}>全部文章 <span>→</span></a>
+    </aside>
   </div>
 </Base>
