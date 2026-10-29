@@ -1,0 +1,280 @@
+{
+  "uid": "172571118",
+  "ownerName": "VincentBK",
+  "profileUrl": "https://space.bilibili.com/172571118/upload/video",
+  "syncedAt": "2026-10-29T10:18:18.975Z",
+  "total": 36,
+  "complete": false,
+  "videos": [
+    {
+      "bvid": "BV19remzbEBu",
+      "title": "[开发日志] 塔科夫GunPlay!",
+      "url": "https://www.bilibili.com/video/BV19remzbEBu/",
+      "coverSource": "https://i1.hdslb.com/bfs/archive/bebd8bfc52fe61e5bc277374cc538776d588461d.jpg",
+      "publishedAt": "2025-08-27T15:22:36.000Z",
+      "duration": "02:38",
+      "cover": "images/videos/BV19remzbEBu.jpg"
+    },
+    {
+      "bvid": "BV1FXY9zpE4U",
+      "title": "[类塔科夫]自制硬核多人射击游戏Demo演示",
+      "url": "https://www.bilibili.com/video/BV1FXY9zpE4U/",
+      "coverSource": "https://i2.hdslb.com/bfs/archive/bd4edf3141766d6adec9e11c2ec3707e43783f27.jpg",
+      "publishedAt": "2025-08-21T13:07:21.000Z",
+      "duration": "09:28",
+      "cover": "images/videos/BV1FXY9zpE4U.jpg"
+    },
+    {
+      "bvid": "BV1axjzzdE6U",
+      "title": "[BKEngine] 开发日志 04: 材质系统，Gameplay，编辑器，光照",
+      "url": "https://www.bilibili.com/video/BV1axjzzdE6U/",
+      "coverSource": "https://i0.hdslb.com/bfs/archive/15c25ab2450d3e6f09ef11643f5c91a98fd98613.jpg",
+      "publishedAt": "2025-05-28T13:48:10.000Z",
+      "duration": "01:47",
+      "cover": "images/videos/BV1axjzzdE6U.jpg"
+    },
+    {
+      "bvid": "BV1f8Etz3ERx",
+      "title": "[BKEngine] 开发日志 03: 骨骼动画",
+      "url": "https://www.bilibili.com/video/BV1f8Etz3ERx/",
+      "coverSource": "https://i2.hdslb.com/bfs/archive/88348aee35e1ae2eba3f9c3030e90802c19fe926.jpg",
+      "publishedAt": "2025-05-16T10:18:02.000Z",
+      "duration": "00:30",
+      "cover": "images/videos/BV1f8Etz3ERx.jpg"
+    },
+    {
+      "bvid": "BV1mLVhzSENV",
+      "title": "[BKEngine] 开发日志 02：Lua集成",
+      "url": "https://www.bilibili.com/video/BV1mLVhzSENV/",
+      "coverSource": "https://i2.hdslb.com/bfs/archive/9329110b76ed52c6c4baa95cf1b04236f98d88a4.jpg",
+      "publishedAt": "2025-05-07T15:23:01.000Z",
+      "duration": "03:06",
+      "cover": "images/videos/BV1mLVhzSENV.jpg"
+    },
+    {
+      "bvid": "BV1KE5xzTEgq",
+      "title": "[BKEngine] 开发日志 01",
+      "url": "https://www.bilibili.com/video/BV1KE5xzTEgq/",
+      "coverSource": "https://i2.hdslb.com/bfs/archive/242c3c11fb1e1a4065312b6e5ee35b23196d4756.jpg",
+      "publishedAt": "2025-04-19T08:31:45.000Z",
+      "duration": "01:26",
+      "cover": "images/videos/BV1KE5xzTEgq.jpg"
+    },
+    {
+      "bvid": "BV1ct421c7wn",
+      "title": "[游戏开发日志]武器同步重构,随机加入战局",
+      "url": "https://www.bilibili.com/video/BV1ct421c7wn/",
+      "coverSource": "https://i2.hdslb.com/bfs/archive/12d4778398aa747760183f56ce0048e6935c598b.jpg",
+      "publishedAt": "2024-05-12T14:05:33.000Z",
+      "duration": "02:19",
+      "cover": "images/videos/BV1ct421c7wn.jpg"
+    },
+    {
+      "bvid": "BV17M4m1Z7Vw",
+      "title": "一键提取塔科夫武器预设模型贴图",
+      "url": "https://www.bilibili.com/video/BV17M4m1Z7Vw/",
+      "coverSource": "https://i1.hdslb.com/bfs/archive/c312d692cb860e55c27c2a0555311a8d4f11ffbc.jpg",
+      "publishedAt": "2024-05-04T09:37:32.000Z",
+      "duration": "03:36",
+      "cover": "images/videos/BV17M4m1Z7Vw.jpg"
+    },
+    {
+      "bvid": "BV1yz4y1K7oq",
+      "title": "AB包资源热更新集成XLua测试",
+      "url": "https://www.bilibili.com/video/BV1yz4y1K7oq/",
+      "coverSource": "https://i1.hdslb.com/bfs/archive/1ace455486c2d9a3f073bbff8adacd1e9e4a89d4.jpg",
+      "publishedAt": "2023-09-02T15:36:19.000Z",
+      "duration": "02:20",
+      "cover": "images/videos/BV1yz4y1K7oq.jpg"
+    },
+    {
+      "bvid": "BV1ju4y1y7F1",
+      "title": "多人FPS游戏框架V1基础测试",
+      "url": "https://www.bilibili.com/video/BV1ju4y1y7F1/",
+      "coverSource": "https://i0.hdslb.com/bfs/archive/32b03751b16388ae5ea2e621d86c727d8fa661d5.jpg",
+      "publishedAt": "2023-09-02T15:32:55.000Z",
+      "duration": "04:05",
+      "cover": "images/videos/BV1ju4y1y7F1.jpg"
+    },
+    {
+      "bvid": "BV14L411B7BY",
+      "title": "[游戏开发]参数化三轴后坐力系统",
+      "url": "https://www.bilibili.com/video/BV14L411B7BY/",
+      "coverSource": "https://i0.hdslb.com/bfs/archive/e79e919a147d2ead5e36e07b8c14f4a2ee86ccd2.jpg",
+      "publishedAt": "2023-05-18T12:23:17.000Z",
+      "duration": "01:45",
+      "cover": "images/videos/BV14L411B7BY.jpg"
+    },
+    {
+      "bvid": "BV1gv4y1p7Zt",
+      "title": "自制卡车模拟器，纯物理",
+      "url": "https://www.bilibili.com/video/BV1gv4y1p7Zt/",
+      "coverSource": "https://i2.hdslb.com/bfs/archive/f868329edbd95fa4543ccf8ff862781544611609.jpg",
+      "publishedAt": "2023-04-01T13:02:02.000Z",
+      "duration": "03:08",
+      "cover": "images/videos/BV1gv4y1p7Zt.jpg"
+    },
+    {
+      "bvid": "BV1vM411q7uJ",
+      "title": "FPS游戏开发日志:射速控制，快慢机",
+      "url": "https://www.bilibili.com/video/BV1vM411q7uJ/",
+      "coverSource": "https://i0.hdslb.com/bfs/archive/f32cf014ec78c82b8aeb74c527938247403fe26f.jpg",
+      "publishedAt": "2023-01-23T12:04:02.000Z",
+      "duration": "02:47",
+      "cover": "images/videos/BV1vM411q7uJ.jpg"
+    },
+    {
+      "bvid": "BV1F8411w7aT",
+      "title": "FPS开发:塔科夫健康，惯性",
+      "url": "https://www.bilibili.com/video/BV1F8411w7aT/",
+      "coverSource": "https://i1.hdslb.com/bfs/archive/b2238e1707f2c3ea3086fb9347fc2d1a0189033d.jpg",
+      "publishedAt": "2023-01-22T13:06:15.000Z",
+      "duration": "02:43",
+      "cover": "images/videos/BV1F8411w7aT.jpg"
+    },
+    {
+      "bvid": "BV1dD4y1J7Db",
+      "title": "新武器MCX Spear ,新倍镜，击中效果演示",
+      "url": "https://www.bilibili.com/video/BV1dD4y1J7Db/",
+      "coverSource": "https://i0.hdslb.com/bfs/archive/7012aae771f4f2393ceb8832eaf46967dbdf97c3.jpg",
+      "publishedAt": "2023-01-19T14:15:36.000Z",
+      "duration": "05:59",
+      "cover": "images/videos/BV1dD4y1J7Db.jpg"
+    },
+    {
+      "bvid": "BV1Xf4y1V7ML",
+      "title": "帅小伙自制CQB射击游戏，暴力AI！",
+      "url": "https://www.bilibili.com/video/BV1Xf4y1V7ML/",
+      "coverSource": "https://i0.hdslb.com/bfs/archive/3284e22ccb5d6dd917a333138f41eca3ab223310.jpg",
+      "publishedAt": "2021-08-13T16:09:38.000Z",
+      "duration": "12:51",
+      "cover": "images/videos/BV1Xf4y1V7ML.jpg"
+    },
+    {
+      "bvid": "BV1mA411T7QJ",
+      "title": "【自制战术射击游戏】新武器M4A1!大量更新！",
+      "url": "https://www.bilibili.com/video/BV1mA411T7QJ/",
+      "coverSource": "https://i2.hdslb.com/bfs/archive/608a675a90f5a74b2655bb2f3439630a2805d5b6.jpg",
+      "publishedAt": "2021-02-04T15:37:45.000Z",
+      "duration": "04:58",
+      "cover": "images/videos/BV1mA411T7QJ.jpg"
+    },
+    {
+      "bvid": "BV19v4y1f7jw",
+      "title": "【自制免费射击游戏】Killroom重磅来袭！来试试你需要几秒吧![狗头]",
+      "url": "https://www.bilibili.com/video/BV19v4y1f7jw/",
+      "coverSource": "https://i1.hdslb.com/bfs/archive/6d02e1017fba130c08d97fb158ddc5464ce15d19.jpg",
+      "publishedAt": "2021-02-01T15:39:31.000Z",
+      "duration": "02:34",
+      "cover": "images/videos/BV19v4y1f7jw.jpg"
+    },
+    {
+      "bvid": "BV17p4y1s7uU",
+      "title": "【自制射击游戏】——联机功能进展",
+      "url": "https://www.bilibili.com/video/BV17p4y1s7uU/",
+      "coverSource": "https://i0.hdslb.com/bfs/archive/5b1f8e162ffe2aade7bab0251df3ceef34c72aee.jpg",
+      "publishedAt": "2021-01-30T17:03:16.000Z",
+      "duration": "02:31",
+      "cover": "images/videos/BV17p4y1s7uU.jpg"
+    },
+    {
+      "bvid": "BV1No4y1d7kj",
+      "title": "【自制射击游戏】持续更新ing——新武器 SCAR",
+      "url": "https://www.bilibili.com/video/BV1No4y1d7kj/",
+      "coverSource": "https://i2.hdslb.com/bfs/archive/9073374e07b09e5c73d05795ba3ed11ee9bf4649.jpg",
+      "publishedAt": "2021-01-30T16:57:33.000Z",
+      "duration": "02:31",
+      "cover": "images/videos/BV1No4y1d7kj.jpg"
+    },
+    {
+      "bvid": "BV1Vp4y1s7kN",
+      "title": "【自制射击游戏】——联机功能测试！",
+      "url": "https://www.bilibili.com/video/BV1Vp4y1s7kN/",
+      "coverSource": "https://i2.hdslb.com/bfs/archive/7eb09227bf5483d022d59d04afbd15c36f459a40.jpg",
+      "publishedAt": "2021-01-28T17:34:24.000Z",
+      "duration": "02:16",
+      "cover": "images/videos/BV1Vp4y1s7kN.jpg"
+    },
+    {
+      "bvid": "BV1qv411s76G",
+      "title": "【自制免费射击游戏】更新日志——新武器，新地图",
+      "url": "https://www.bilibili.com/video/BV1qv411s76G/",
+      "coverSource": "https://i1.hdslb.com/bfs/archive/f82764bd8a30493c6df3d71916562e42b36344f4.jpg",
+      "publishedAt": "2021-01-26T16:56:44.000Z",
+      "duration": "03:15",
+      "cover": "images/videos/BV1qv411s76G.jpg"
+    },
+    {
+      "bvid": "BV1Lr4y1M7Vr",
+      "title": "【自制完全免费拟真射击游戏系列】——新武器 FN-P90!【简介有试玩方式】",
+      "url": "https://www.bilibili.com/video/BV1Lr4y1M7Vr/",
+      "coverSource": "https://i1.hdslb.com/bfs/archive/3ed17d74593590d1f61652a861dd43647f089bc3.jpg",
+      "publishedAt": "2021-01-25T11:05:15.000Z",
+      "duration": "03:56",
+      "cover": "images/videos/BV1Lr4y1M7Vr.jpg"
+    },
+    {
+      "bvid": "BV1Zz4y1S7xy",
+      "title": "自制 完全免费 拟真射击游戏现已开放体验啦！",
+      "url": "https://www.bilibili.com/video/BV1Zz4y1S7xy/",
+      "coverSource": "https://i0.hdslb.com/bfs/archive/9d6b09edb44e2c9754185d1d9bbef03fffb029ad.jpg",
+      "publishedAt": "2021-01-24T09:45:13.000Z",
+      "duration": "03:18",
+      "cover": "images/videos/BV1Zz4y1S7xy.jpg"
+    },
+    {
+      "bvid": "BV1hU4y147Qg",
+      "title": "自制拟真类射击游戏——第七期！HK416-Mod0!",
+      "url": "https://www.bilibili.com/video/BV1hU4y147Qg/",
+      "coverSource": "https://i1.hdslb.com/bfs/archive/cba1da923029d4f21e6463daf1168b84dd6370d9.jpg",
+      "publishedAt": "2021-01-21T16:24:42.000Z",
+      "duration": "02:57",
+      "cover": "images/videos/BV1hU4y147Qg.jpg"
+    },
+    {
+      "bvid": "BV13y4y1H7qg",
+      "title": "自制拟真类射击游戏——第六期——MK18!!!",
+      "url": "https://www.bilibili.com/video/BV13y4y1H7qg/",
+      "coverSource": "https://i2.hdslb.com/bfs/archive/bb7b53f90fa36a23f60761dff178687339a6138c.jpg",
+      "publishedAt": "2021-01-19T13:57:50.000Z",
+      "duration": "02:40",
+      "cover": "images/videos/BV13y4y1H7qg.jpg"
+    },
+    {
+      "bvid": "BV1Jo4y1o716",
+      "title": "自制拟真类游戏——第五期！——MCX!!!",
+      "url": "https://www.bilibili.com/video/BV1Jo4y1o716/",
+      "coverSource": "https://i2.hdslb.com/bfs/archive/60bc358582f8fe6f7f5e8b5fee0ac51c990f37d0.jpg",
+      "publishedAt": "2021-01-18T16:50:39.000Z",
+      "duration": "03:59",
+      "cover": "images/videos/BV1Jo4y1o716.jpg"
+    },
+    {
+      "bvid": "BV1T54y1s7mh",
+      "title": "自制射击游戏——新武器：巨浪！（AS VAL)",
+      "url": "https://www.bilibili.com/video/BV1T54y1s7mh/",
+      "coverSource": "https://i1.hdslb.com/bfs/archive/b3cb2460366dc298733c35735a20e274b988dde7.jpg",
+      "publishedAt": "2021-01-16T14:29:23.000Z",
+      "duration": "01:48",
+      "cover": "images/videos/BV1T54y1s7mh.jpg"
+    },
+    {
+      "bvid": "BV1bV411t7cY",
+      "title": "帅小伙自制硬核射击游戏",
+      "url": "https://www.bilibili.com/video/BV1bV411t7cY/",
+      "coverSource": "https://i1.hdslb.com/bfs/archive/03f056f45aa1161907bb9d544a4243c834b2450b.jpg",
+      "publishedAt": "2021-01-15T14:52:43.000Z",
+      "duration": "01:34",
+      "cover": "images/videos/BV1bV411t7cY.jpg"
+    },
+    {
+      "bvid": "BV1yK4y157mh",
+      "title": "当程序猿爱上逃离塔科夫",
+      "url": "https://www.bilibili.com/video/BV1yK4y157mh/",
+      "coverSource": "https://i1.hdslb.com/bfs/archive/1c263f7a50d07e8b306115fb47d0d69e36daf43c.jpg",
+      "publishedAt": "2021-01-10T15:50:20.000Z",
+      "duration": "03:17",
+      "cover": "images/videos/BV1yK4y157mh.jpg"
+    }
+  ]
+}

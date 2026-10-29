@@ -8,9 +8,44 @@ import { execFileSync } from 'node:child_process';
 import { createShowcaseFrames } from '../src/data/showcase.ts';
 import { getProjectImages, projects } from '../src/data/site.ts';
 import { prepareReadme } from './project-readme-plugin.mjs';
+import { normalizeBilibiliVideos } from './bilibili.mjs';
 
 const root = resolve(import.meta.dirname, '..');
 const dist = join(root, 'dist');
+
+test('video import rejects incomplete lists, wrong owners and unexpected cover hosts', () => {
+  const video = { mid: 172571118, bvid: 'BV19remzbEBu', title: '测试视频', created: 1756308156, length: '02:38', pic: 'http://i1.hdslb.com/bfs/archive/cover.jpg' };
+  const older = { ...video, bvid: 'BV1FXY9zpE4U', created: 1756308155 };
+  const list = normalizeBilibiliVideos([older, video, video], '172571118', 2);
+  assert.equal(list[0].bvid, video.bvid);
+  assert.equal(list[0].coverSource, 'https://i1.hdslb.com/bfs/archive/cover.jpg');
+  assert.equal(list[0].url, 'https://www.bilibili.com/video/BV19remzbEBu/');
+  assert.throws(() => normalizeBilibiliVideos([video], '172571118', 2), /Incomplete/);
+  assert.throws(() => normalizeBilibiliVideos([{ ...video, mid: 1 }], '172571118', 1), /owner/);
+  assert.throws(() => normalizeBilibiliVideos([{ ...video, pic: 'https://example.com/cover.jpg' }], '172571118', 1), /cover host/);
+});
+
+test('video coverage is accurately disclosed and all collected videos render with local covers below the projects', async () => {
+  const snapshot = JSON.parse(await readFile(join(root, 'src/data/videos.json'), 'utf8'));
+  assert.equal(snapshot.complete, snapshot.videos.length === snapshot.total, 'completeness must match actual coverage');
+  assert.ok(snapshot.videos.length <= snapshot.total);
+  assert.equal(new Set(snapshot.videos.map(video => video.bvid)).size, snapshot.videos.length);
+  const home = await readFile(join(dist, 'blog/index.html'), 'utf8');
+  if (!snapshot.complete) {
+    assert.ok(home.includes(`已收录 ${snapshot.videos.length} / ${snapshot.total} 个公开视频`), 'partial coverage must be visible to visitors');
+    assert.ok(home.includes(`href="${snapshot.profileUrl}"`), 'provide the original Bilibili profile');
+    assert.ok(home.includes('data-video-complete="false"'));
+  }
+  assert.ok(home.indexOf('id="personal-videos"') > home.indexOf('id="personal-projects"'));
+  for (const [index, video] of snapshot.videos.entries()) {
+    if (index) assert.ok(video.publishedAt <= snapshot.videos[index - 1].publishedAt);
+    assert.ok(home.includes(`href="${video.url}"`));
+    assert.ok(home.includes(`src="/${video.cover}"`));
+    await stat(join(root, 'public', video.cover));
+  }
+  assert.equal([...home.matchAll(/data-video-card(?:\s|>)/g)].length, snapshot.videos.length);
+  assert.ok(home.includes('data-video-more'), 'all videos are in HTML; JavaScript enhances the list with load more');
+});
 async function filesIn(directory) {
   const entries = await readdir(directory, { withFileTypes: true });
   return (await Promise.all(entries.map(entry => entry.isDirectory() ? filesIn(join(directory, entry.name)) : join(directory, entry.name)))).flat();

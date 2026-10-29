@@ -1,0 +1,84 @@
+---
+import { videoProfile, videos } from '../data/videos';
+import { href, formatDate } from '../data/paths';
+import BilibiliIcon from './BilibiliIcon.astro';
+---
+<section class="hub-videos" id="personal-videos" aria-labelledby="personal-videos-title" data-video-section data-video-complete={String(videoProfile.complete)}>
+  <header class="hub-heading"><p class="eyebrow">PERSONAL VIDEOS</p><div><h2 id="personal-videos-title">B站视频</h2><a class="section-link" href={videoProfile.url} target="_blank" rel="noopener noreferrer">B 站主页 <span>↗</span></a></div><p>开发日志、作品演示，还有一路上的探索。</p>{!videoProfile.complete && <p class="video-coverage">已收录 {videos.length} / {videoProfile.total} 个公开视频</p>}</header>
+  <div class="video-grid" id="personal-video-list">
+    {videos.map((video, index) => <a class:list={['video-card', { 'video-card-extra': index >= 6 }]} href={video.url} target="_blank" rel="noopener noreferrer" data-video-card>
+      <div class="video-cover"><img src={href(video.cover)} alt="" loading="lazy" decoding="async" width="640" height="360" /><span class="video-play" aria-hidden="true"><BilibiliIcon size={36}/></span><span class="video-duration"><span class="sr-only">时长 </span>{video.duration}</span></div>
+      <div class="video-body"><h3>{video.title}</h3><div class="video-meta"><time datetime={video.publishedAt}>{formatDate(new Date(video.publishedAt))}</time><span class="video-brand"><BilibiliIcon size={14}/><span>BILIBILI</span><span aria-hidden="true">↗</span></span></div></div>
+    </a>)}
+  </div>
+  <div class="video-footer"><span class="video-count" data-video-count aria-live="polite">共 {videos.length} 个视频</span>{videos.length > 6 && <button class="button button-secondary video-more" type="button" aria-controls="personal-video-list" data-video-more hidden>加载更多 <span aria-hidden="true">↓</span></button>}</div>
+  <div class="video-sentinel" data-video-sentinel aria-hidden="true"></div>
+</section>
+
+<style>
+  .hub-videos { --bilibili-pink: #fb7299; margin-top: 60px; }
+  :global(html:not([data-theme='dark'])) .hub-videos { --bilibili-pink: #c92f63; }
+  .video-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 20px; }
+  .video-card { min-width: 0; display: block; overflow: hidden; background: var(--glass-project, var(--surface)); border: 1px solid var(--glass-rim, var(--line)); border-radius: 14px; transition: border-color .2s, box-shadow .2s; }
+  .video-card:is(:hover, :focus-visible) { border-color: var(--bilibili-pink); box-shadow: 0 0 0 1px rgb(251 114 153 / 12%), 0 12px 32px rgb(251 114 153 / 9%); }
+  .video-card:focus-visible { outline-color: var(--bilibili-pink); }
+  .video-cover { position: relative; aspect-ratio: 16/9; overflow: hidden; background: var(--soft); }
+  .video-cover::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgb(28 5 14 / 80%), rgb(103 24 49 / 72%)); opacity: 0; transition: opacity .2s; }
+  .video-cover img { width: 100%; height: 100%; object-fit: cover; }
+  .video-play { position: absolute; z-index: 1; inset: 0; margin: auto; display: grid; place-items: center; width: 68px; height: 68px; color: #fb7299; border: 1px solid rgb(251 114 153 / 45%); border-radius: 18px; background: rgb(251 114 153 / 10%); opacity: 0; transform: translateY(5px); transition: opacity .2s, transform .2s; }
+  .video-card:is(:hover, :focus-visible) .video-cover::after { opacity: 1; }
+  .video-card:is(:hover, :focus-visible) .video-play { opacity: 1; transform: none; }
+  .video-duration { position: absolute; right: 9px; bottom: 9px; z-index: 1; color: #fff; background: #000b; border-radius: 4px; padding: 2px 5px; font: 9px/1.5 var(--mono); }
+  .video-body { padding: 16px; }
+  .video-body h3 { font-size: 13px; font-weight: 500; line-height: 1.8; min-height: 3.6em; overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .video-meta { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; color: var(--subtle); font: 9px var(--mono); margin-top: 16px; }
+  .video-meta > span { font-size: 8px; }
+  .video-brand { display: inline-flex; align-items: center; gap: 5px; color: var(--bilibili-pink); }
+  .video-footer { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 23px; }
+  .video-count { font-size: 10px; color: var(--subtle); }
+  .video-sentinel { height: 1px; pointer-events: none; }
+  .video-more { font-size: 11px; min-height: 38px; background: var(--surface); }
+  :global(.js) .video-card-extra { display: none; }
+  @media (max-width: 700px) { .hub-videos { margin-top: 42px; } }
+  @media (max-width: 480px) { .video-grid { grid-template-columns: minmax(0,1fr); } .video-body h3 { font-size: 14px; min-height: auto; } }
+  @media (hover: none) { .video-play { width: 48px; height: 48px; opacity: 1; transform: none; border-radius: 12px; background: #0009; } }
+  @media (prefers-reduced-motion: reduce) { .video-card, .video-cover::after, .video-play { transition: none; } }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-video-section]').forEach(section => {
+    const button = section.querySelector<HTMLButtonElement>('[data-video-more]');
+    const status = section.querySelector<HTMLElement>('[data-video-count]');
+    const cards = [...section.querySelectorAll<HTMLAnchorElement>('[data-video-card]')];
+    const sentinel = section.querySelector<HTMLElement>('[data-video-sentinel]');
+    if (!button || !status) return;
+    let shown = Math.min(6, cards.length);
+    const complete = section.dataset.videoComplete === 'true';
+    let observer: IntersectionObserver | undefined;
+    const update = () => {
+      status.textContent = `已显示 ${shown} / ${cards.length} 个视频`;
+      button.hidden = shown >= cards.length;
+    };
+    update();
+    const reveal = (moveFocus = false) => {
+      if (shown >= cards.length) return;
+      const firstNew = cards[shown];
+      const next = Math.min(shown + 6, cards.length);
+      cards.slice(shown, next).forEach(card => card.classList.remove('video-card-extra'));
+      shown = next;
+      update();
+      if (moveFocus) firstNew?.focus({ preventScroll: true });
+      if (shown >= cards.length) {
+        observer?.disconnect();
+        status.textContent = complete ? `已显示全部 ${cards.length} 个视频` : `已显示已收录的 ${cards.length} 个视频`;
+      }
+    };
+    button.addEventListener('click', () => reveal(true));
+    if (sentinel && 'IntersectionObserver' in window) {
+      observer = new IntersectionObserver(entries => {
+        if (entries.some(entry => entry.isIntersecting)) reveal();
+      }, { threshold: 0 });
+      observer.observe(sentinel);
+    }
+  });
+</script>

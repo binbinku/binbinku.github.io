@@ -12,7 +12,8 @@
     "build": "astro build",
     "preview": "astro preview --host 127.0.0.1",
     "test": "node --test scripts/site.test.mjs",
-    "sync:readmes": "node scripts/sync-project-readmes.mjs"
+    "sync:readmes": "node scripts/sync-project-readmes.mjs",
+    "sync:videos": "node scripts/sync-videos.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",
