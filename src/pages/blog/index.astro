@@ -4,6 +4,7 @@ import '../../styles/ambient.css';
 import ProjectCard from '../../components/ProjectCard.astro';
 import PersonalProjectCard from '../../components/PersonalProjectCard.astro';
 import PersonalVideos from '../../components/PersonalVideos.astro';
+import PersonalOpus from '../../components/PersonalOpus.astro';
 import { personalProjects } from '../../data/personal-projects';
 import Icon from '../../components/Icon.astro';
 import { profile, projects } from '../../data/site';
@@ -33,6 +34,7 @@ const posts = await getPosts();
       <div class="project-grid">{personalProjects.map((project, index) => <PersonalProjectCard project={project} index={index}/>)}</div>
     </section>
     <PersonalVideos/>
+    <PersonalOpus/>
     </div>
     <aside class="hub-articles" aria-labelledby="notes-title">
       <header class="hub-heading"><p class="eyebrow">NOTES & IDEAS</p><h2 id="notes-title">文章列表</h2><p>偶尔记录，也持续探索。</p></header>

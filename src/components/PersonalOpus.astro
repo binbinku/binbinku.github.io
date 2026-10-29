@@ -1,0 +1,7 @@
+---
+import BilibiliGallery from './BilibiliGallery.astro';
+import { opusPosts, opusProfile } from '../data/bilibili-opus';
+interface Props { standalone?: boolean; primary?: boolean }
+const { standalone = false, primary = false } = Astro.props;
+---
+<BilibiliGallery kind="opus" items={opusPosts} profileUrl={opusProfile.url} total={opusProfile.total} complete={opusProfile.complete} wide={standalone} primary={primary}/>

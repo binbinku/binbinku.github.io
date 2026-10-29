@@ -8,7 +8,7 @@ import { execFileSync } from 'node:child_process';
 import { createShowcaseFrames } from '../src/data/showcase.ts';
 import { getProjectImages, projects } from '../src/data/site.ts';
 import { prepareReadme } from './project-readme-plugin.mjs';
-import { normalizeBilibiliVideos } from './bilibili.mjs';
+import { normalizeBilibiliVideos, normalizeBilibiliOpus, opusPublicationDate } from './bilibili.mjs';
 
 const root = resolve(import.meta.dirname, '..');
 const dist = join(root, 'dist');
@@ -23,6 +23,57 @@ test('video import rejects incomplete lists, wrong owners and unexpected cover h
   assert.throws(() => normalizeBilibiliVideos([video], '172571118', 2), /Incomplete/);
   assert.throws(() => normalizeBilibiliVideos([{ ...video, mid: 1 }], '172571118', 1), /owner/);
   assert.throws(() => normalizeBilibiliVideos([{ ...video, pic: 'https://example.com/cover.jpg' }], '172571118', 1), /cover host/);
+});
+
+test('opus imports retain exact IDs and public text without inventing dates', () => {
+  const item = { opus_id: '1111756734208147472', content: '信息量增加', jump_url: '//www.bilibili.com/opus/1111756734208147472', cover: { url: 'http://i0.hdslb.com/bfs/new_dyn/cover.png' }, author: null };
+  const posts = normalizeBilibiliOpus([item, item], '172571118');
+  assert.equal(posts.length, 1);
+  assert.equal(posts[0].id, '1111756734208147472');
+  assert.equal(posts[0].url, 'https://www.bilibili.com/opus/1111756734208147472');
+  assert.equal(posts[0].coverSource, 'https://i0.hdslb.com/bfs/new_dyn/cover.png');
+  assert.equal(posts[0].publishedAt, undefined);
+  assert.equal(normalizeBilibiliOpus([{ ...item, cover: null }], '172571118')[0].coverSource, undefined);
+  assert.throws(() => normalizeBilibiliOpus([{ ...item, opus_id: Number(item.opus_id) }], '172571118'), /precision loss/);
+  assert.throws(() => normalizeBilibiliOpus([{ ...item, jump_url: 'https://example.com/opus/1111756734208147472' }], '172571118'), /opus link/);
+  assert.throws(() => normalizeBilibiliOpus([{ ...item, author: { mid: 1 } }], '172571118'), /owner/);
+  const detail = { id_str: item.opus_id, modules: { module_author: { mid: 172571118, pub_ts: 1757689436 } } };
+  assert.equal(opusPublicationDate(detail, item.opus_id, '172571118'), '2025-09-12T15:03:56.000Z');
+  assert.throws(() => opusPublicationDate(detail, '1', '172571118'), /ID/);
+  assert.throws(() => opusPublicationDate(detail, item.opus_id, '1'), /owner/);
+  assert.throws(() => opusPublicationDate({ ...detail, modules: {} }, item.opus_id, '172571118'), /owner/);
+});
+
+test('opus pages share complete content, local covers and independent pagination', async () => {
+  const snapshot = JSON.parse(await readFile(join(root, 'src/data/bilibili-opus.json'), 'utf8'));
+  assert.equal(snapshot.complete, true);
+  assert.equal(snapshot.posts.length, snapshot.total);
+  assert.equal(new Set(snapshot.posts.map(post => post.id)).size, snapshot.total);
+  for (const path of ['blog/index.html', 'videos/index.html', 'opus/index.html']) {
+    const html = await readFile(join(dist, path), 'utf8');
+    if (path !== 'opus/index.html') {
+      assert.ok(html.indexOf('id="bilibili-opus"') > html.indexOf('id="personal-videos"'));
+      assert.ok(html.includes('data-video-more'));
+    } else {
+      assert.match(html, /<h1[^>]*id="bilibili-opus-title"[^>]*>B站图文<\/h1>/);
+      assert.match(html, /<a href="\/opus\/"[^>]*aria-current="page"[^>]*>图文<\/a>/);
+    }
+    assert.match(html, /<a href="\/opus\/"[^>]*>图文<\/a>/);
+    assert.equal([...html.matchAll(/data-opus-card(?:\s|>)/g)].length, snapshot.total);
+    assert.ok(html.includes('data-opus-more'));
+    assert.ok(html.includes('theme-opus'));
+    for (const post of snapshot.posts) {
+      assert.ok(html.includes(`href="${post.url}"`));
+      assert.ok(post.publishedAt && Number.isFinite(Date.parse(post.publishedAt)), 'every opus has a verified publication date');
+      assert.ok(html.includes(`datetime="${post.publishedAt}"`));
+      if (post.cover) {
+        assert.ok(html.includes(`src="/${post.cover}"`));
+        await stat(join(root, 'public', post.cover));
+      }
+    }
+  }
+  const standalone = await readFile(join(dist, 'opus/index.html'), 'utf8');
+  assert.equal([...standalone.matchAll(/发布于\s*<time\b/g)].length, snapshot.total);
 });
 
 test('video coverage is accurately disclosed and all collected videos render with local covers below the projects', async () => {
@@ -50,6 +101,7 @@ test('video coverage is accurately disclosed and all collected videos render wit
   assert.match(archive, /<a href="\/videos\/"[^>]*aria-current="page"[^>]*>视频<\/a>/, 'video navigation marks the current page');
   assert.match(archive, /<h1[^>]*id="personal-videos-title"[^>]*>B站视频<\/h1>/);
   assert.equal([...archive.matchAll(/data-video-card(?:\s|>)/g)].length, snapshot.videos.length);
+  assert.equal([...archive.matchAll(/发布于\s*<time\b/g)].length, snapshot.videos.length + JSON.parse(await readFile(join(root, 'src/data/bilibili-opus.json'), 'utf8')).total);
 });
 async function filesIn(directory) {
   const entries = await readdir(directory, { withFileTypes: true });

@@ -1,0 +1,120 @@
+---
+import type { BilibiliEntry } from '../data/bilibili';
+import { href, formatDate } from '../data/paths';
+import BilibiliIcon from './BilibiliIcon.astro';
+interface Props {
+  kind: 'video' | 'opus';
+  items: BilibiliEntry[];
+  profileUrl: string;
+  complete: boolean;
+  total: number;
+  wide?: boolean;
+  primary?: boolean;
+}
+const { kind, items, profileUrl, complete, total, wide = false, primary = false } = Astro.props;
+const isVideo = kind === 'video';
+const sectionId = isVideo ? 'personal-videos' : 'bilibili-opus';
+const listId = isVideo ? 'personal-video-list' : 'bilibili-opus-list';
+const title = isVideo ? 'B站视频' : 'B站图文';
+const noun = isVideo ? '个视频' : '篇图文';
+const publicNoun = isVideo ? '个公开视频' : '篇公开图文';
+const Heading = primary ? 'h1' : 'h2';
+---
+<section class:list={['bilibili-gallery', `theme-${kind}`, { 'gallery-wide': wide, 'gallery-primary': primary }]} id={sectionId} aria-labelledby={`${sectionId}-title`} data-bilibili-section data-bilibili-noun={noun} data-bilibili-complete={String(complete)} data-video-section={isVideo ? '' : undefined} data-video-complete={isVideo ? String(complete) : undefined} data-opus-section={!isVideo ? '' : undefined}>
+  <header class:list={['hub-heading', { 'page-heading': primary }]}>
+    <p class="eyebrow">{isVideo ? 'BILIBILI VIDEOS' : 'BILIBILI POSTS'}</p>
+    <div><Heading id={`${sectionId}-title`}>{title}</Heading><a class="section-link" href={profileUrl} target="_blank" rel="noopener noreferrer">{isVideo ? 'B 站主页' : 'B 站图文'} <span>↗</span></a></div>
+    <p>{isVideo ? '开发日志、作品演示，还有一路上的探索。' : '开发进展和日常记录，都留在这里。'}</p>
+    {!complete && <p class="bilibili-coverage">已收录 {items.length} / {total} {publicNoun}</p>}
+  </header>
+  <div class="bilibili-grid" id={listId}>
+    {items.map((item, index) => <a class:list={['bilibili-card', { 'bilibili-card-extra': index >= 6 }]} href={item.url} target="_blank" rel="noopener noreferrer" data-bilibili-card data-video-card={isVideo ? '' : undefined} data-opus-card={!isVideo ? '' : undefined}>
+      <div class="bilibili-cover">
+        {item.cover ? <img src={href(item.cover)} alt="" loading="lazy" decoding="async" width="640" height="360"/> : <div class="bilibili-text-cover" aria-hidden="true"><BilibiliIcon size={44}/><span>图文</span></div>}
+        <span class="bilibili-open" aria-hidden="true"><BilibiliIcon size={36}/></span>
+        {item.duration && <span class="bilibili-duration"><span class="sr-only">时长 </span>{item.duration}</span>}
+      </div>
+      <div class="bilibili-body"><h3>{item.title}</h3><div class="bilibili-meta">
+        {item.publishedAt ? <span>发布于 <time datetime={item.publishedAt}>{formatDate(new Date(item.publishedAt))}</time></span> : <span>图文</span>}
+        <span class="bilibili-brand"><BilibiliIcon size={14}/><span>BILIBILI</span><span aria-hidden="true">↗</span></span>
+      </div></div>
+    </a>)}
+  </div>
+  <div class="bilibili-footer"><span class="bilibili-count" data-bilibili-count data-video-count={isVideo ? '' : undefined} data-opus-count={!isVideo ? '' : undefined} aria-live="polite">共 {items.length} {noun}</span>{items.length > 6 && <button class="button button-secondary bilibili-more" type="button" aria-controls={listId} data-bilibili-more data-video-more={isVideo ? '' : undefined} data-opus-more={!isVideo ? '' : undefined} hidden>加载更多 <span aria-hidden="true">↓</span></button>}</div>
+  <div class="bilibili-sentinel" data-bilibili-sentinel data-video-sentinel={isVideo ? '' : undefined} aria-hidden="true"></div>
+</section>
+
+<style>
+  .bilibili-gallery { --bilibili-rgb: 251 114 153; --bilibili-accent: rgb(var(--bilibili-rgb)); --bilibili-text: var(--bilibili-accent); --tint-start: 28 5 14; --tint-end: 103 24 49; margin-top: 60px; }
+  .theme-opus { --bilibili-rgb: 0 161 214; --tint-start: 4 17 29; --tint-end: 8 62 94; }
+  :global(html:not([data-theme='dark'])) .theme-video { --bilibili-text: #c92f63; }
+  :global(html:not([data-theme='dark'])) .theme-opus { --bilibili-text: #007799; }
+  .bilibili-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 20px; }
+  .bilibili-gallery.gallery-primary { margin-top: 0; }
+  .gallery-wide .bilibili-grid { grid-template-columns: repeat(3,minmax(0,1fr)); }
+  .bilibili-card { min-width: 0; display: block; overflow: hidden; background: var(--glass-project, var(--surface)); border: 1px solid var(--glass-rim, var(--line)); border-radius: 14px; transition: border-color .2s, box-shadow .2s; }
+  .bilibili-card:is(:hover, :focus-visible) { border-color: var(--bilibili-accent); box-shadow: 0 0 0 1px rgb(var(--bilibili-rgb) / 12%), 0 12px 32px rgb(var(--bilibili-rgb) / 9%); }
+  .bilibili-card:focus-visible { outline-color: var(--bilibili-accent); }
+  .bilibili-cover { position: relative; aspect-ratio: 16/9; overflow: hidden; background: var(--soft); }
+  .bilibili-cover::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgb(var(--tint-start) / 80%), rgb(var(--tint-end) / 72%)); opacity: 0; transition: opacity .2s; }
+  .bilibili-cover img { width: 100%; height: 100%; object-fit: cover; }
+  .bilibili-text-cover { height: 100%; display: grid; place-content: center; justify-items: center; gap: 12px; color: var(--bilibili-text); font-size: 11px; }
+  .bilibili-open { position: absolute; z-index: 1; inset: 0; margin: auto; display: grid; place-items: center; width: 68px; height: 68px; color: var(--bilibili-accent); border: 1px solid rgb(var(--bilibili-rgb) / 45%); border-radius: 18px; background: rgb(var(--bilibili-rgb) / 10%); opacity: 0; transform: translateY(5px); transition: opacity .2s, transform .2s; }
+  .bilibili-card:is(:hover, :focus-visible) .bilibili-cover::after { opacity: 1; }
+  .bilibili-card:is(:hover, :focus-visible) .bilibili-open { opacity: 1; transform: none; }
+  .bilibili-duration { position: absolute; right: 9px; bottom: 9px; z-index: 1; color: #fff; background: #000b; border-radius: 4px; padding: 2px 5px; font: 9px/1.5 var(--mono); }
+  .bilibili-body { padding: 16px; }
+  .bilibili-body h3 { font-size: 13px; font-weight: 500; line-height: 1.8; min-height: 3.6em; overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .bilibili-meta { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; color: var(--subtle); font: 9px var(--mono); margin-top: 16px; }
+  .bilibili-meta > .bilibili-brand { font-size: 8px; }
+  .bilibili-brand { display: inline-flex; align-items: center; gap: 5px; color: var(--bilibili-text); }
+  .bilibili-footer { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 23px; }
+  .bilibili-count { font-size: 10px; color: var(--subtle); }
+  .bilibili-sentinel { height: 1px; pointer-events: none; }
+  .bilibili-more { font-size: 11px; min-height: 38px; background: var(--surface); }
+  :global(.js) .bilibili-card-extra { display: none; }
+  @media (max-width: 1000px) { .gallery-wide .bilibili-grid { grid-template-columns: repeat(2,minmax(0,1fr)); } }
+  @media (max-width: 700px) { .bilibili-gallery { margin-top: 42px; } }
+  @media (max-width: 480px) { .bilibili-grid, .gallery-wide .bilibili-grid { grid-template-columns: minmax(0,1fr); } .bilibili-body h3 { font-size: 14px; min-height: auto; } }
+  @media (hover: none) { .bilibili-open { width: 48px; height: 48px; opacity: 1; transform: none; border-radius: 12px; background: #0009; } }
+  @media (prefers-reduced-motion: reduce) { .bilibili-card, .bilibili-cover::after, .bilibili-open { transition: none; } }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-bilibili-section]').forEach(section => {
+    const button = section.querySelector<HTMLButtonElement>('[data-bilibili-more]');
+    const status = section.querySelector<HTMLElement>('[data-bilibili-count]');
+    const cards = [...section.querySelectorAll<HTMLAnchorElement>('[data-bilibili-card]')];
+    const sentinel = section.querySelector<HTMLElement>('[data-bilibili-sentinel]');
+    if (!button || !status) return;
+    const noun = section.dataset.bilibiliNoun || '';
+    const complete = section.dataset.bilibiliComplete === 'true';
+    let shown = Math.min(6, cards.length);
+    let observer: IntersectionObserver | undefined;
+    const update = () => {
+      status.textContent = `已显示 ${shown} / ${cards.length} ${noun}`;
+      button.hidden = shown >= cards.length;
+    };
+    update();
+    const reveal = (moveFocus = false) => {
+      if (shown >= cards.length) return;
+      const firstNew = cards[shown];
+      const next = Math.min(shown + 6, cards.length);
+      cards.slice(shown, next).forEach(card => card.classList.remove('bilibili-card-extra'));
+      shown = next;
+      update();
+      if (moveFocus) firstNew?.focus({ preventScroll: true });
+      if (shown >= cards.length) {
+        observer?.disconnect();
+        status.textContent = complete ? `已显示全部 ${cards.length} ${noun}` : `已显示已收录的 ${cards.length} ${noun}`;
+      }
+    };
+    button.addEventListener('click', () => reveal(true));
+    if (sentinel && 'IntersectionObserver' in window) {
+      observer = new IntersectionObserver(entries => {
+        if (entries.some(entry => entry.isIntersecting)) reveal();
+      }, { threshold: 0 });
+      observer.observe(sentinel);
+    }
+  });
+</script>

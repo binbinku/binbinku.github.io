@@ -36,3 +36,35 @@ export function normalizeBilibiliVideos(items, uid, expectedCount) {
   if (videos.size !== expectedCount) throw new Error(`Incomplete video list: expected ${expectedCount}, got ${videos.size}; existing snapshot was kept`);
   return [...videos.values()].sort((a, b) => b.publishedAt.localeCompare(a.publishedAt) || a.bvid.localeCompare(b.bvid));
 }
+
+export function normalizeBilibiliOpus(items, uid) {
+  const posts = new Map();
+  for (const item of items) {
+    if (typeof item.opus_id !== 'string' || !/^\d+$/.test(item.opus_id)) throw new Error('Invalid opus ID; keep IDs as strings to avoid precision loss');
+    if (item.author?.mid && String(item.author.mid) !== String(uid)) throw new Error('Opus owner does not match the configured UID');
+    const url = new URL(item.jump_url, 'https://www.bilibili.com');
+    if (url.hostname !== 'www.bilibili.com' || url.pathname !== `/opus/${item.opus_id}` || !['http:', 'https:'].includes(url.protocol)) throw new Error('Unexpected opus link');
+    url.protocol = 'https:';
+    const title = typeof item.content === 'string' ? item.content.trim() : '';
+    if (!title) throw new Error('Missing opus text');
+    let coverSource;
+    if (item.cover?.url) {
+      const cover = new URL(item.cover.url, 'https://i0.hdslb.com');
+      if (!/(^|\.)(hdslb\.com|biliimg\.com)$/.test(cover.hostname) || !['http:', 'https:'].includes(cover.protocol)) throw new Error('Unexpected opus cover host');
+      cover.protocol = 'https:';
+      coverSource = cover.href;
+    }
+    const publishedAt = item.pub_ts === undefined ? undefined : opusPublicationDate({ id_str: item.opus_id, modules: { module_author: { mid: uid, pub_ts: item.pub_ts } } }, item.opus_id, uid);
+    posts.set(item.opus_id, { id: item.opus_id, title, url: url.href, ...(coverSource ? { coverSource } : {}), ...(publishedAt ? { publishedAt } : {}) });
+  }
+  return [...posts.values()];
+}
+
+export function opusPublicationDate(item, id, uid) {
+  const author = item?.modules?.module_author;
+  if (String(item?.id_str) !== String(id)) throw new Error('Opus detail ID does not match');
+  if (String(author?.mid) !== String(uid)) throw new Error('Opus detail owner does not match');
+  const timestamp = Number(author?.pub_ts);
+  if (!Number.isSafeInteger(timestamp) || timestamp <= 0 || !Number.isFinite(new Date(timestamp * 1000).valueOf())) throw new Error('Missing or invalid opus publication date');
+  return new Date(timestamp * 1000).toISOString();
+}
