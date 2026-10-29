@@ -2,7 +2,7 @@
 title: 'BKEFTTools：从武器预设找到模型与纹理资源'
 description: '把预设、物品数据库与资源包关联起来，用 C# 桌面界面组织 EFT 资源导出流程。'
 pubDate: 2026-10-29
-tags: ['项目介绍', '.NET', '资源工具']
+tags: ['项目介绍', '桌面工具', '资源工具']
 draft: false
 ---
 
