@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import AiUsageBadge from '../components/AiUsageBadge.astro';
 import ProjectVisual from '../components/ProjectVisual.astro';
 import { projects, profile, getProjectImages } from '../data/site';
 import { href } from '../data/paths';
@@ -8,7 +9,7 @@ import { href } from '../data/paths';
   <section class="showcase" data-showcase role="region" aria-roledescription="carousel" aria-label="GitHub 置顶项目展示" aria-describedby="showcase-help">
     <div class="showcase-stage">
       {projects.map((project, index) => <article class="showcase-slide" data-slide data-name={project.name} hidden={index !== 0} aria-hidden={index !== 0 ? 'true' : 'false'} role="group" aria-roledescription="slide" aria-label={`${index + 1} / ${projects.length}：${project.name}`}>
-        <div class="showcase-copy"><p class="slide-eyebrow"><span>{String(index + 1).padStart(2, '0')}</span> / {project.category}</p><p class="slide-repository">{project.name}</p><h1>{project.titleLines.map(line => <span>{line}</span>)}</h1><p class="slide-tagline">{project.tagline}</p><p class="slide-description">{project.description}</p><div class="slide-stack">{project.stack.map(item => <span>{item}</span>)}</div><span class="showcase-enter">进入我的空间 <span>↗</span></span></div>
+        <div class="showcase-copy"><p class="slide-eyebrow"><span>{String(index + 1).padStart(2, '0')}</span> / {project.category} <AiUsageBadge projectId={project.id}/></p><p class="slide-repository">{project.name}</p><h1>{project.titleLines.map(line => <span>{line}</span>)}</h1><p class="slide-tagline">{project.tagline}</p><p class="slide-description">{project.description}</p><div class="slide-stack">{project.stack.map(item => <span>{item}</span>)}</div><span class="showcase-enter">进入我的空间 <span>↗</span></span></div>
         <div class="showcase-media"><div class="media-topline"><span>{project.image ? 'FROM THE REPOSITORY' : 'PROJECT ILLUSTRATION'}</span><span>{project.language}</span></div><ProjectVisual project={project} gallery eager/><div class="image-dots" role="group" aria-label={`${project.name} 图片选择`}>{Array.from({ length: Math.max(1, getProjectImages(project).length) }, (_, imageIndex) => <button type="button" data-image-select={imageIndex} aria-label={`查看 ${project.name} 第 ${imageIndex + 1} 张图片`} aria-pressed={imageIndex === 0 ? 'true' : 'false'}></button>)}</div><p class="media-caption">{project.image ? '项目仓库中的公开素材' : '图形开发项目 · 几何示意'}<span>点击进入主页 ↗</span></p></div>
       </article>)}
       <a class="stage-hitbox" href={href('blog/')} aria-label="进入 BK 的主页，了解全部项目和作者"></a>

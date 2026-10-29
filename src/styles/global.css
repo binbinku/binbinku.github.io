@@ -45,8 +45,8 @@ h1, h2, h3, p { margin: 0; }
 .stage-hitbox { position: absolute; inset: 0; z-index: 2; outline-offset: -3px; }
 .showcase-slide { position: relative; z-index: 3; pointer-events: none; display: grid; grid-template-columns: .82fr 1.18fr; align-items: center; gap: 60px; width: min(1440px,100%); margin-inline: auto; padding-block: 30px; animation: slide-in .7s ease both; }
 .showcase-copy { min-width: 0; }
-.slide-eyebrow { color: #8c8c8c; font: 10px var(--mono); letter-spacing: 1.3px; margin-bottom: 30px; }
-.slide-eyebrow > span { color: #eee; margin-right: 7px; }
+.slide-eyebrow { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; color: #8c8c8c; font: 10px var(--mono); letter-spacing: 1.3px; margin-bottom: 30px; }
+.slide-eyebrow > span:first-child { color: #eee; margin-right: 7px; }
 .slide-repository { font: 11px var(--mono); color: #777; letter-spacing: -.2px; margin-bottom: 13px; }
 .showcase-copy h1 { font-size: clamp(60px,6.9vw,112px); font-weight: 650; line-height: 1.03; letter-spacing: -6px; }
 .showcase-copy h1 > span { display: block; }
@@ -554,3 +554,13 @@ h1, h2, h3, p { margin: 0; }
 .project-readme kbd { display: inline-block; font: 11px var(--mono); padding: 2px 6px; border: 1px solid var(--line); border-radius: 4px; background: var(--soft); }
 .project-readme hr { display: none; }
 .project-readme .task-list-item { list-style: none; }
+
+.ai-usage-badge { display: inline-flex; align-items: center; gap: 7px; width: fit-content; padding: 3px 8px; border: 1px solid var(--line); border-radius: 4px; background: var(--soft); color: var(--muted); font-size: 10px; font-weight: 400; line-height: 1.7; letter-spacing: 0; white-space: nowrap; }
+.ai-usage-prefix { font: 9px var(--mono); opacity: .7; }
+.ai-usage-light { color: var(--accent); }
+.ai-usage-heavy { color: #9370d9; }
+[data-theme='dark'] .ai-usage-heavy { color: #baa0ee; }
+.ai-usage-unconfirmed { color: var(--subtle); border-style: dashed; }
+.project-ai-usage { margin-top: 11px; }
+.slide-eyebrow .ai-usage-badge { margin-left: 5px; font-size: 8px; padding: 3px 7px; }
+.slide-eyebrow .ai-usage-prefix { font-size: 8px; }

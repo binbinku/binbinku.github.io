@@ -55,6 +55,10 @@ draft: false
 
 配色和响应式样式位于 `src/styles/global.css`。视觉参考 Vercel / Geist 的黑白与细边界，使用纯色背景，不添加网格、边缘框线或十字装饰。所有页面默认深色，内容页保留深浅色切换；入口固定深色，不改变内容页手动选择的主题。主题偏好使用新版 `bk-theme-v2` 存储键，旧版默认浅色状态不再影响此版本。字体使用 Google Fonts 的 Geist / Geist Mono，网络不可用时回退到系统字体。
 
+## AI 使用程度标签
+
+开源项目、个人项目的卡片与详情，以及全屏展示页，统一显示 AI 使用程度。集中编辑 `src/data/ai-usage.ts` 中的 `projectAiUsage`，键为项目路由 ID：`none`（没有使用）、`light`（轻度使用）、`heavy`（重度使用）。未经作者确认的项目使用 `unconfirmed`（待确认），不根据项目语言、代码风格或 README 提及的工具推测。
+
 ## 开源项目 README
 
 开源项目卡片进入本站 `/projects/<slug>/` 阅读 README，“查看源码”按钮打开对应 GitHub 仓库。文档快照在 `src/content/project-readmes/`，版本与图片映射在 `src/data/project-readmes.json`；相对图片复制到 `public/images/readmes/`，相对文档链接转换为原仓库地址。README 的目录、表格、代码高亮、图片、键盘标记与折叠问答均可阅读，HTML 经过清理后静态输出。

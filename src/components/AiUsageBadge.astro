@@ -1,0 +1,7 @@
+---
+import { getAiUsage } from '../data/ai-usage';
+interface Props { projectId: string }
+const { projectId } = Astro.props;
+const { level, label } = getAiUsage(projectId);
+---
+<span class:list={['ai-usage-badge', `ai-usage-${level}`]} data-ai-usage={level} aria-label={`AI 使用程度：${label}`}><span class="ai-usage-prefix">AI</span><span>{label}</span></span>
