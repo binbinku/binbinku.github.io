@@ -55,16 +55,23 @@ draft: false
 
 ## 全屏入口与项目素材
 
-入口仅保留项目展示内容，不显示顶栏、底栏或轮播指示条。默认每 6.5 秒切换一次；键盘左右方向键切换项目，空格键暂停／继续，回车进入主页。键盘聚焦时暂停轮播，另提供仅在键盘聚焦时显示的暂停／播放按钮；页面不可见时暂停计时。系统设置为减少动态效果时默认暂停。关闭 JavaScript 后仍显示第一个项目并可正常进入主页。
+入口仅保留项目展示内容，不显示顶栏、底栏或轮播指示条。每张图片默认展示 6.5 秒，每个项目最多三张，按配置顺序播完才进入下一个项目；单张素材或几何示意图项目展示一次后继续。键盘左右方向键按同样顺序切换图片，空格键暂停／继续，回车进入主页。键盘聚焦时暂停轮播，另提供仅在键盘聚焦时显示的暂停／播放按钮；页面不可见时暂停计时。系统设置为减少动态效果时默认暂停。关闭 JavaScript 后仍显示第一个项目并可正常进入主页。
+
+`src/data/site.ts` 中的 `image` 是项目封面，`gallery` 可追加图片（包含 `src`、`alt`）。展示页以封面为第一张，去重后最多取三张；主页项目卡片仍使用封面。
 
 项目素材保存于 `public/images/projects/`，均来自用户自己的对应公开仓库，来源如下：
 
 | 本地文件 | 来源仓库路径 |
 | --- | --- |
 | `project-manager.png` | `binbinku/BKProjectManager` → `docs/assets/workbench-dark.png` |
+| `project-manager-workspace.png` | `binbinku/BKProjectManager` → `docs/assets/workspace-dark.png` |
+| `project-manager-category.png` | `binbinku/BKProjectManager` → `docs/assets/category-dark.png` |
+| `device-monitor-hardware.jpg` | `binbinku/BKDeviceMonitor` → `docs/screenshots/hardware.jpg` |
 | `device-monitor.jpg` | `binbinku/BKDeviceMonitor` → `docs/screenshots/overview.jpg` |
 | `app-switch.png` | `binbinku/BKAppSwitch` → `docs/images/window-switcher.png` |
 | `clean-helper.svg` | `binbinku/BKCleanHelper` → `docs/images/overlay.svg` |
+| `eft-tools-items.png` | `binbinku/BKEFTTools` → `Data/ItemDB.png` |
+| `eft-tools-preset.png` | `binbinku/BKEFTTools` → `Data/ItemPreset.png` |
 | `eft-tools.png` | `binbinku/BKEFTTools` → `Data/Start.png` |
 
 DX11Template 没有项目截图，使用本站绘制并明确标注的几何示意图。BKCleanHelper 素材本身是仓库的界面示意图；BKAppSwitch 素材使用仓库提供的演示数据。图片不依赖第三方图床或运行时 API。

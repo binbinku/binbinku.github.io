@@ -9,6 +9,8 @@ export const profile = {
   avatar: 'https://avatars.githubusercontent.com/u/58103137?v=4',
 };
 
+export interface ProjectImage { src: string; alt: string }
+
 export interface Project {
   id: string;
   name: string;
@@ -21,6 +23,7 @@ export interface Project {
   url: string;
   image?: string;
   imageAlt?: string;
+  gallery?: ProjectImage[];
 }
 
 // binbinku GitHub 主页置顶仓库的静态快照，2026-10-29。
@@ -33,6 +36,10 @@ export const projects: Project[] = [
     language: 'JavaScript', category: '开发工具', stack: ['Electron', 'TypeScript', 'macOS / Windows'],
     url: 'https://github.com/binbinku/BKProjectManager',
     image: 'images/projects/project-manager.png', imageAlt: 'BKProjectManager 仓库中的独立工作台截图：目录、代码预览与终端',
+    gallery: [
+      { src: 'images/projects/project-manager-workspace.png', alt: 'BKProjectManager 仓库中的工作空间截图' },
+      { src: 'images/projects/project-manager-category.png', alt: 'BKProjectManager 仓库中的项目分类截图' },
+    ],
   },
   {
     id: 'device-monitor', name: 'BKDeviceMonitor', titleLines: ['Device', 'Monitor.'],
@@ -41,6 +48,7 @@ export const projects: Project[] = [
     language: 'JavaScript', category: '设备工具', stack: ['Electron', 'Android / ADB', '性能监测'],
     url: 'https://github.com/binbinku/BKDeviceMonitor',
     image: 'images/projects/device-monitor.jpg', imageAlt: 'BKDeviceMonitor 仓库中的性能总览截图：CPU、GPU、内存与趋势',
+    gallery: [{ src: 'images/projects/device-monitor-hardware.jpg', alt: 'BKDeviceMonitor 仓库中的设备硬件信息截图' }],
   },
   {
     id: 'app-switch', name: 'BKAppSwitch', titleLines: ['App', 'Switch.'],
@@ -72,5 +80,17 @@ export const projects: Project[] = [
     language: 'C#', category: '资源工具', stack: ['.NET 8', 'C#', 'AssetStudioCLI'],
     url: 'https://github.com/binbinku/BKEFTTools',
     image: 'images/projects/eft-tools.png', imageAlt: 'BKEFTTools 仓库中的启动界面截图',
+    gallery: [
+      { src: 'images/projects/eft-tools-items.png', alt: 'BKEFTTools 仓库中的物品数据库界面截图' },
+      { src: 'images/projects/eft-tools-preset.png', alt: 'BKEFTTools 仓库中的物品预设界面截图' },
+    ],
   },
 ];
+
+// Cover first; ignore duplicate paths and cap the entire presentation at three images.
+export function getProjectImages(project: Project): ProjectImage[] {
+  const cover = project.image ? [{ src: project.image, alt: project.imageAlt || project.name }] : [];
+  return [...cover, ...(project.gallery || [])]
+    .filter((image, index, images) => images.findIndex(item => item.src === image.src) === index)
+    .slice(0, 3);
+}

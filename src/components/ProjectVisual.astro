@@ -1,11 +1,12 @@
 ---
-import type { Project } from '../data/site';
+import { getProjectImages, type Project } from '../data/site';
 import { href } from '../data/paths';
-interface Props { project: Project; eager?: boolean }
-const { project, eager = false } = Astro.props;
+interface Props { project: Project; eager?: boolean; gallery?: boolean }
+const { project, eager = false, gallery = false } = Astro.props;
+const images = getProjectImages(project).slice(0, gallery ? 3 : 1);
 ---
 <div class:list={['project-visual', `visual-${project.id}`]}>
-  {project.image ? <img src={href(project.image)} alt={project.imageAlt} loading={eager ? 'eager' : 'lazy'} decoding="async" width="1280" height="840"/> : <div class="graphics-preview" aria-label="DX11 项目模板的几何示意图">
+  {images.length ? images.map((image, index) => <img data-image-frame={gallery ? index : undefined} hidden={index !== 0} aria-hidden={index !== 0 ? "true" : "false"} src={href(image.src)} alt={image.alt} loading={eager ? 'eager' : 'lazy'} decoding="async" width="1280" height="840"/>) : <div data-image-frame={gallery ? 0 : undefined} class="graphics-preview" aria-label="DX11 项目模板的几何示意图">
     <svg viewBox="0 0 400 280" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1"><path d="m200 35 100 58v115l-100 57-100-57V93Z"/><path d="m100 93 100 58 100-58M200 151v114M150 64l100 58v115M250 64l-100 58v115M100 151l100 57 100-57"/><path d="M60 230h280M200 10v265" stroke-dasharray="3 6" opacity=".3"/></g></svg>
     <div class="graphics-label"><strong>DX11</strong><span>C++ / GRAPHICS TEMPLATE</span></div>
   </div>}

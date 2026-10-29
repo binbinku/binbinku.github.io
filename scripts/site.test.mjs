@@ -5,6 +5,9 @@ import { join, resolve } from 'node:path';
 import { tmpdir } from 'node:os';
 import { execFileSync } from 'node:child_process';
 
+import { createShowcaseFrames } from '../src/data/showcase.ts';
+import { getProjectImages, projects } from '../src/data/site.ts';
+
 const root = resolve(import.meta.dirname, '..');
 const dist = join(root, 'dist');
 async function filesIn(directory) {
@@ -81,4 +84,20 @@ test('adding Markdown generates dated lists, encoded tag archives, adjacent link
   } finally {
     await rm(temporary, { recursive: true, force: true });
   }
+});
+
+test('showcase finishes each project gallery, caps at three images and preserves fallback projects', () => {
+  assert.deepEqual(createShowcaseFrames([3, 1, 0, 5]), [
+    { projectIndex: 0, imageIndex: 0 }, { projectIndex: 0, imageIndex: 1 }, { projectIndex: 0, imageIndex: 2 },
+    { projectIndex: 1, imageIndex: 0 }, { projectIndex: 2, imageIndex: 0 },
+    { projectIndex: 3, imageIndex: 0 }, { projectIndex: 3, imageIndex: 1 }, { projectIndex: 3, imageIndex: 2 },
+  ]);
+  assert.deepEqual(createShowcaseFrames([]), []);
+  const project = projects[0];
+  const images = getProjectImages({ ...project, gallery: [
+    { src: project.image, alt: 'duplicate' },
+    { src: 'second.png', alt: 'second' }, { src: 'third.png', alt: 'third' }, { src: 'fourth.png', alt: 'fourth' },
+  ] });
+  assert.deepEqual(images.map(image => image.src), [project.image, 'second.png', 'third.png']);
+  assert.deepEqual(projects.map(project => getProjectImages(project).length), [3, 2, 1, 1, 0, 3]);
 });

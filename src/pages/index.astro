@@ -9,41 +9,50 @@ import { href } from '../data/paths';
     <div class="showcase-stage">
       {projects.map((project, index) => <article class="showcase-slide" data-slide data-name={project.name} hidden={index !== 0} aria-hidden={index !== 0 ? 'true' : 'false'} role="group" aria-roledescription="slide" aria-label={`${index + 1} / ${projects.length}：${project.name}`}>
         <div class="showcase-copy"><p class="slide-eyebrow"><span>{String(index + 1).padStart(2, '0')}</span> / {project.category}</p><p class="slide-repository">{project.name}</p><h1>{project.titleLines.map(line => <span>{line}</span>)}</h1><p class="slide-tagline">{project.tagline}</p><p class="slide-description">{project.description}</p><div class="slide-stack">{project.stack.map(item => <span>{item}</span>)}</div><span class="showcase-enter">进入我的空间 <span>↗</span></span></div>
-        <div class="showcase-media"><div class="media-topline"><span>{project.image ? 'FROM THE REPOSITORY' : 'PROJECT ILLUSTRATION'}</span><span>{project.language}</span></div><ProjectVisual project={project} eager/><p class="media-caption">{project.image ? '项目仓库中的公开素材' : '图形开发项目 · 几何示意'}<span>点击进入主页 ↗</span></p></div>
+        <div class="showcase-media"><div class="media-topline"><span>{project.image ? 'FROM THE REPOSITORY' : 'PROJECT ILLUSTRATION'}</span><span>{project.language}</span></div><ProjectVisual project={project} gallery eager/><p class="media-caption">{project.image ? '项目仓库中的公开素材' : '图形开发项目 · 几何示意'}<span>点击进入主页 ↗</span></p></div>
       </article>)}
       <a class="stage-hitbox" href={href('blog/')} aria-label="进入 BK 的主页，了解全部项目和作者"></a>
     </div>
-    <p class="sr-only" id="showcase-help">项目自动轮播。使用左右方向键切换，空格键暂停或继续，回车进入主页。</p>
+    <p class="sr-only" id="showcase-help">每个项目最多展示三张图片，全部播完再切换项目。左右方向键切换图片，空格键暂停或继续，回车进入主页。</p>
     <button class="sr-only showcase-pause" data-play aria-label="暂停自动轮播" aria-pressed="false">暂停自动轮播</button>
     <p class="sr-only" data-announcement aria-live="polite" aria-atomic="true"></p>
     <noscript><p class="showcase-noscript">浏览全部项目，请<a href={href('blog/')}>进入主页 →</a></p></noscript>
   </section>
   <script>
+    import { createShowcaseFrames } from '../data/showcase';
     const root = document.querySelector<HTMLElement>('[data-showcase]');
     if (root) {
       const slides = [...root.querySelectorAll<HTMLElement>('[data-slide]')];
+      const images = slides.map(slide => [...slide.querySelectorAll<HTMLElement>('[data-image-frame]')]);
+      const frames = createShowcaseFrames(images.map(items => items.length));
       const play = root.querySelector<HTMLButtonElement>('[data-play]');
       const announcement = root.querySelector('[data-announcement]');
       const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
       const duration = 6500;
-      let index = 0;
+      let frameIndex = 0;
       let elapsed = 0;
       let lastTime = 0;
       let frame: number | undefined;
       let paused = reducedMotion.matches;
       function show(next: number, announce = false) {
-        index = (next + slides.length) % slides.length;
+        frameIndex = (next + frames.length) % frames.length;
+        const { projectIndex, imageIndex } = frames[frameIndex];
         elapsed = 0;
+        lastTime = 0;
         slides.forEach((slide, position) => {
-          slide.hidden = position !== index;
-          slide.setAttribute('aria-hidden', String(position !== index));
+          slide.hidden = position !== projectIndex;
+          slide.setAttribute('aria-hidden', String(position !== projectIndex));
+          images[position].forEach((image, index) => {
+            image.hidden = index !== (position === projectIndex ? imageIndex : 0);
+            image.setAttribute('aria-hidden', String(image.hidden));
+          });
         });
-        if (announce && announcement) announcement.textContent = `正在展示 ${slides[index].dataset.name}，第 ${index + 1} 个，共 ${slides.length} 个项目`;
+        if (announce && announcement) announcement.textContent = `正在展示 ${slides[projectIndex].dataset.name}，第 ${projectIndex + 1} 个项目，第 ${imageIndex + 1} 张，共 ${images[projectIndex].length} 张图片`;
       }
       function tick(time: number) {
         if (lastTime) elapsed += time - lastTime;
         lastTime = time;
-        if (elapsed >= duration) show(index + 1);
+        if (elapsed >= duration) show(frameIndex + 1);
         frame = requestAnimationFrame(tick);
       }
       function updatePlayback() {
@@ -55,7 +64,7 @@ import { href } from '../data/paths';
           play.setAttribute('aria-label', paused ? '播放自动轮播' : '暂停自动轮播');
           play.setAttribute('aria-pressed', String(paused));
         }
-        if (!paused && !document.hidden && slides.length > 1) frame = requestAnimationFrame(tick);
+        if (!paused && !document.hidden && frames.length > 1) frame = requestAnimationFrame(tick);
       }
       play?.addEventListener('click', () => { paused = !paused; updatePlayback(); });
       root.addEventListener('focusin', event => {
@@ -73,7 +82,7 @@ import { href } from '../data/paths';
           event.preventDefault();
           paused = true;
           updatePlayback();
-          show(index + (event.key === 'ArrowRight' ? 1 : -1), true);
+          show(frameIndex + (event.key === 'ArrowRight' ? 1 : -1), true);
         }
       });
       document.addEventListener('visibilitychange', updatePlayback);
