@@ -1,7 +1,6 @@
 ---
 import { render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
-import BlogSidebar from '../../components/BlogSidebar.astro';
 import { getPosts } from '../../data/posts';
 import { href, formatDate, postHref, tagHref } from '../../data/paths';
 export async function getStaticPaths() {
@@ -12,16 +11,15 @@ const { post, newer, older } = Astro.props;
 const { Content, headings } = await render(post);
 const toc = headings.filter(heading => heading.depth === 2 || heading.depth === 3);
 ---
-<Base title={post.data.title} description={post.data.description} active="blog">
+<Base title={post.data.title} description={post.data.description} active="writing">
   <div class="reading-masthead"><div class="container">
-    <a class="back-link" href={href('blog/')}>博客 <span>/</span> 正在阅读</a>
+    <a class="back-link" href={href('writing/')}>笔记 <span>/</span> 正在阅读</a>
     <header class="article-heading"><div class="tag-list">{post.data.tags.map(tag => <a class="tag" href={tagHref(tag)}># {tag}</a>)}</div><h1>{post.data.title}</h1><p>{post.data.description}</p><div class="post-meta"><span class="author-initial">BK</span><span>BK</span><span class="meta-divider">/</span><time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time><span class="meta-divider">/</span><span>代码与思考</span></div></header>
   </div></div>
   <div class="container article-container"><div class="article-grid">
-    <div class="article-body"><article class="prose"><Content /></article><div class="article-end"><span class="note-symbol">*</span><p>感谢阅读，保持好奇。</p><a href={href('blog/')}>回到所有文章 ↗</a></div><nav class="post-pagination" aria-label="相邻文章">{newer && <a href={postHref(newer.id)}><small>← 上一篇</small>{newer.data.title}</a>}{older && <a href={postHref(older.id)}><small>下一篇 →</small>{older.data.title}</a>}</nav></div>
+    <div class="article-body"><article class="prose"><Content /></article><div class="article-end"><span class="note-symbol">*</span><p>感谢阅读，保持好奇。</p><a href={href('writing/')}>回到所有笔记 ↗</a></div><nav class="post-pagination" aria-label="相邻文章">{newer && <a href={postHref(newer.id)}><small>← 上一篇</small>{newer.data.title}</a>}{older && <a href={postHref(older.id)}><small>下一篇 →</small>{older.data.title}</a>}</nav></div>
     <aside class="article-sidebar">
       {toc.length > 0 && <details class="toc sidebar-card" open><summary>文章目录 <span class="mono">CONTENTS</span></summary><nav aria-label="文章目录"><ol>{toc.map(heading => <li class:list={[{ nested: heading.depth === 3 }]}><a href={`#${heading.slug}`}>{heading.text}</a></li>)}</ol></nav></details>}
-      <BlogSidebar compact showTopics={false}/>
     </aside>
   </div></div>
 </Base>

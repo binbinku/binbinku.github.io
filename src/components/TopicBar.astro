@@ -6,6 +6,6 @@ const { posts, active } = Astro.props;
 const tags = [...new Set(posts.flatMap(post => post.data.tags))].sort();
 ---
 <nav class="topic-bar" aria-label="文章标签" id="topics">
-  <a href={href('blog/')} class:list={['topic-tab', { selected: !active }]} aria-current={!active ? 'page' : undefined}>全部 <span>{posts.length}</span></a>
+  <a href={href('writing/')} class:list={['topic-tab', { selected: !active }]} aria-current={!active ? 'page' : undefined}>全部 <span>{posts.length}</span></a>
   {tags.map(tag => <a href={tagHref(tag)} class:list={['topic-tab', { selected: active === tag }]} aria-current={active === tag ? 'page' : undefined}>{tag}<span>{posts.filter(post => post.data.tags.includes(tag)).length}</span></a>)}
 </nav>

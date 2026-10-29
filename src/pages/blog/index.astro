@@ -1,17 +1,17 @@
 ---
 import Base from '../../layouts/Base.astro';
-import PostList from '../../components/PostList.astro';
-import TopicBar from '../../components/TopicBar.astro';
-import BlogSidebar from '../../components/BlogSidebar.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import Icon from '../../components/Icon.astro';
+import { profile, projects } from '../../data/site';
+import { href, postHref, formatDate } from '../../data/paths';
 import { getPosts } from '../../data/posts';
 const posts = await getPosts();
 ---
-<Base title="博客" active="blog">
-  <div class="container page-content">
-    <header class="page-heading"><p class="eyebrow">THE NOTEBOOK</p><h1>一些记录，一路探索<span>.</span></h1><p>关于代码、工具，以及那些值得留下的想法。</p></header>
-    <div class="content-layout">
-      <div class="main-feed"><TopicBar posts={posts}/>{posts.length ? <PostList posts={posts} headingLevel="h2"/> : <p class="empty-state">还没有发布文章，敬请期待。</p>}</div>
-      <aside class="content-sidebar" aria-label="作者与话题"><BlogSidebar/></aside>
-    </div>
+<Base title="主页" active="home">
+  <div class="container hub-page">
+    <section class="hub-intro section-frame"><p class="eyebrow"><span class="status-dot"></span> {profile.role} / INDEPENDENT BUILDER</p><h1>你好，我是 BK。<br /><span>把日常问题，做成实用工具。</span></h1><p>{profile.introduction}</p><div class="hero-buttons"><a class="button button-primary" href={href('projects/')}>探索我的项目 <span>↗</span></a><a class="button button-secondary" href={href('about/')}>关于我 <span>→</span></a></div><a class="showreel-link" href={href()}>↖ 再看一次作品放映</a></section>
+    <section class="hub-projects section-frame" aria-labelledby="projects-title"><div class="section-heading"><div><p class="eyebrow">01 / PINNED ON GITHUB</p><h2 id="projects-title">构建有用的东西。</h2><p class="section-description">我的 GitHub 置顶项目，从桌面效率到设备与图形开发。</p></div><a class="section-link" href={`${profile.github}?tab=repositories`} target="_blank" rel="noopener noreferrer">GitHub <span>↗</span></a></div><div class="project-grid">{projects.map((project, index) => <ProjectCard project={project} index={index}/>)}</div></section>
+    <section class="about-strip section-frame"><div><span class="eyebrow">02 / THE PERSON BEHIND THE PROJECTS</span><h2>从一个小问题开始。<br /><span>用代码，试着给出答案。</span></h2><p>关注工具本身，也关注使用工具的人。从项目管理、窗口切换到设备监测，开源是我分享探索的一种方式。</p><a class="story-link" href={href('about/')}>更多关于我 →</a></div><div class="identity-panel"><img src={profile.avatar} alt="BK 的 GitHub 头像" width="72" height="72"/><strong>{profile.name}</strong><span>@{profile.handle}</span><p>{profile.role}</p><a href={profile.github} target="_blank" rel="noopener noreferrer"><Icon name="github" size={16}/> GitHub ↗</a></div></section>
+    <section class="notes-section section-frame" aria-labelledby="notes-title"><div class="section-heading"><div><p class="eyebrow">03 / OCCASIONAL NOTES</p><h2 id="notes-title">偶尔，也写一点。</h2></div><a class="section-link" href={href('writing/')}>全部笔记 <span>↗</span></a></div>{posts.length ? <div class="notes-list">{posts.slice(0, 2).map(post => <a href={postHref(post.id)}><time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time><span>{post.data.title}</span><span>↗</span></a>)}</div> : <p class="empty-state">项目在更新，笔记慢慢写。</p>}</section>
   </div>
 </Base>

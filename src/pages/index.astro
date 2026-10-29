@@ -1,31 +1,94 @@
 ---
 import Base from '../layouts/Base.astro';
-import FeaturedStory from '../components/FeaturedStory.astro';
-import BlogSidebar from '../components/BlogSidebar.astro';
-import ProjectCard from '../components/ProjectCard.astro';
-import PostList from '../components/PostList.astro';
-import { projects } from '../data/site';
+import ProjectVisual from '../components/ProjectVisual.astro';
+import { projects, profile } from '../data/site';
 import { href } from '../data/paths';
-import { getPosts } from '../data/posts';
-const posts = await getPosts();
 ---
-<Base active="home">
-  <div class="container home-page">
-    <header class="home-masthead"><div><p class="eyebrow">A PERSONAL SPACE FOR BUILDING & THINKING</p><h1>写代码，也写下思考<span>.</span></h1></div><p class="masthead-note"><span class="status-dot"></span> 保持好奇，持续构建</p></header>
-    {posts[0] && <FeaturedStory post={posts[0]}/>}
-    <div class="content-layout home-layout">
-      <div class="main-feed">
-        <section aria-labelledby="latest-title">
-          <div class="section-heading"><div><span class="eyebrow">THE LATEST</span><h2 id="latest-title">最近更新<span class="section-count">{posts.length}</span></h2></div><a class="section-link" href={href('blog/')}>全部文章 <span>↗</span></a></div>
-          {posts.length ? <PostList posts={posts.slice(0, 4)}/> : <p class="empty-state">第一篇笔记正在路上，先去看看我的项目吧。</p>}
-        </section>
-        <section class="home-projects" aria-labelledby="projects-title">
-          <div class="section-heading"><div><span class="eyebrow">SELECTED WORK</span><h2 id="projects-title">把想法做出来<span class="section-count">{projects.length}</span></h2></div><a class="section-link" href={href('projects/')}>全部项目 <span>↗</span></a></div>
-          <div class="project-grid">{projects.map((project, index) => <ProjectCard project={project} index={index}/>)}</div>
-        </section>
-        <div class="feed-end"><span></span><p>每一点探索，都值得留下记录。</p><span></span></div>
-      </div>
-      <aside class="content-sidebar" aria-label="作者与话题"><BlogSidebar/></aside>
+<Base immersive title="开源作品" description={profile.description}>
+  <section class="showcase" data-showcase role="region" aria-roledescription="carousel" aria-label="GitHub 置顶项目展示">
+    <header class="showcase-header"><a href={href('blog/')} class="showcase-brand" aria-label="进入 BK 的主页">bk<span>.</span></a><p>INDEPENDENT DEVELOPER <span>/</span> OPEN SOURCE</p><a class="showcase-home" href={href('blog/')}>进入主页 <span>↗</span></a></header>
+    <div class="showcase-stage">
+      {projects.map((project, index) => <article class="showcase-slide" data-slide data-name={project.name} hidden={index !== 0} aria-hidden={index !== 0 ? 'true' : 'false'} role="group" aria-roledescription="slide" aria-label={`${index + 1} / ${projects.length}：${project.name}`}>
+        <div class="showcase-copy"><p class="slide-eyebrow"><span>{String(index + 1).padStart(2, '0')}</span> / {project.category}</p><p class="slide-repository">{project.name}</p><h1>{project.titleLines.map(line => <span>{line}</span>)}</h1><p class="slide-tagline">{project.tagline}</p><p class="slide-description">{project.description}</p><div class="slide-stack">{project.stack.map(item => <span>{item}</span>)}</div><span class="showcase-enter">进入我的空间 <span>↗</span></span></div>
+        <div class="showcase-media"><div class="media-topline"><span>{project.image ? 'FROM THE REPOSITORY' : 'PROJECT ILLUSTRATION'}</span><span>{project.language}</span></div><ProjectVisual project={project} eager/><p class="media-caption">{project.image ? '项目仓库中的公开素材' : '图形开发项目 · 几何示意'}<span>点击进入主页 ↗</span></p></div>
+      </article>)}
+      <a class="stage-hitbox" href={href('blog/')} aria-label="进入 BK 的主页，了解全部项目和作者"></a>
     </div>
-  </div>
+    <footer class="showcase-footer"><div class="showcase-project-nav" aria-label="选择展示项目">{projects.map((project, index) => <button class="project-selector" data-select={index} data-url={project.url} aria-label={`展示 ${project.name}`} aria-pressed={index === 0 ? 'true' : 'false'}><span class="selector-number">{String(index + 1).padStart(2, '0')}</span><span class="selector-name">{project.name.replace('BK', '')}</span><span class="selector-track"><i></i></span></button>)}</div><div class="showcase-bottom"><span class="showcase-credit">© {new Date().getFullYear()} BK <span>/</span> SELECTED GITHUB PROJECTS</span><div class="playback-controls"><button data-prev aria-label="上一个项目">←</button><button data-play aria-label="暂停自动轮播" aria-pressed="false">Ⅱ</button><button data-next aria-label="下一个项目">→</button><span class="slide-counter" aria-hidden="true"><span data-current>01</span> / {String(projects.length).padStart(2, '0')}</span></div><a class="showcase-source" data-source href={projects[0].url} target="_blank" rel="noopener noreferrer">查看项目源码 ↗</a></div></footer>
+    <p class="sr-only" data-announcement aria-live="polite" aria-atomic="true"></p>
+    <noscript><p class="showcase-noscript">浏览全部项目，请<a href={href('blog/')}>进入主页 →</a></p></noscript>
+  </section>
+  <script>
+    const root = document.querySelector<HTMLElement>('[data-showcase]');
+    if (root) {
+      const slides = [...root.querySelectorAll<HTMLElement>('[data-slide]')];
+      const selectors = [...root.querySelectorAll<HTMLButtonElement>('[data-select]')];
+      const play = root.querySelector<HTMLButtonElement>('[data-play]');
+      const source = root.querySelector<HTMLAnchorElement>('[data-source]');
+      const current = root.querySelector('[data-current]');
+      const announcement = root.querySelector('[data-announcement]');
+      const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+      const duration = 6500;
+      let index = 0;
+      let elapsed = 0;
+      let lastTime = 0;
+      let frame: number | undefined;
+      let paused = reducedMotion.matches;
+      function show(next: number, announce = false) {
+        index = (next + slides.length) % slides.length;
+        elapsed = 0;
+        slides.forEach((slide, position) => {
+          slide.hidden = position !== index;
+          slide.setAttribute('aria-hidden', String(position !== index));
+        });
+        selectors.forEach((selector, position) => {
+          selector.setAttribute('aria-pressed', String(position === index));
+          selector.style.setProperty('--progress', '0');
+        });
+        if (source) source.href = selectors[index].dataset.url || source.href;
+        if (current) current.textContent = String(index + 1).padStart(2, '0');
+        if (announce && announcement) announcement.textContent = `正在展示 ${slides[index].dataset.name}，第 ${index + 1} 个，共 ${slides.length} 个项目`;
+      }
+      function tick(time: number) {
+        if (lastTime) elapsed += time - lastTime;
+        lastTime = time;
+        if (elapsed >= duration) show(index + 1);
+        selectors[index].style.setProperty('--progress', String(Math.min(elapsed / duration, 1)));
+        frame = requestAnimationFrame(tick);
+      }
+      function updatePlayback() {
+        if (frame !== undefined) cancelAnimationFrame(frame);
+        lastTime = 0;
+        root!.dataset.paused = String(paused || document.hidden);
+        if (play) {
+          play.textContent = paused ? '▶' : 'Ⅱ';
+          play.setAttribute('aria-label', paused ? '播放自动轮播' : '暂停自动轮播');
+          play.setAttribute('aria-pressed', String(paused));
+        }
+        if (!paused && !document.hidden && slides.length > 1) frame = requestAnimationFrame(tick);
+      }
+      selectors.forEach((selector, position) => selector.addEventListener('click', () => show(position, true)));
+      root.querySelector('[data-prev]')?.addEventListener('click', () => show(index - 1, true));
+      root.querySelector('[data-next]')?.addEventListener('click', () => show(index + 1, true));
+      play?.addEventListener('click', () => { paused = !paused; updatePlayback(); });
+      root.addEventListener('focusin', event => {
+        if (!(event.target instanceof Element) || event.target.closest('[data-play]')) return;
+        paused = true;
+        updatePlayback();
+      });
+      root.addEventListener('keydown', event => {
+        if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+          event.preventDefault();
+          paused = true;
+          updatePlayback();
+          show(index + (event.key === 'ArrowRight' ? 1 : -1), true);
+        }
+      });
+      document.addEventListener('visibilitychange', updatePlayback);
+      reducedMotion.addEventListener('change', () => { paused = reducedMotion.matches; updatePlayback(); });
+      window.addEventListener('pagehide', () => { if (frame !== undefined) cancelAnimationFrame(frame); });
+      window.addEventListener('pageshow', updatePlayback);
+      updatePlayback();
+    }
+  </script>
 </Base>

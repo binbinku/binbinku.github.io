@@ -1,6 +1,11 @@
-# BK · 代码与思考
+# BK · 构建有用的东西
 
-中文个人网站与 Markdown 博客。Astro + TypeScript，部署到 **https://binbinku.github.io/BKSite/**。
+以开源项目与个人展示为主的中文网站。Astro + TypeScript，部署到 **https://binbinku.github.io/BKSite/**。
+
+- `/BKSite/`：全屏沉浸式作品入口，循环展示六个 GitHub 置顶项目；点击展示区进入主页。
+- `/BKSite/blog/`：内容主页，重点展示项目和个人介绍，底部保留少量笔记入口。
+- `/BKSite/projects/`、`/BKSite/about/`：项目与个人详细介绍。
+- `/BKSite/writing/`：笔记归档；既有文章仍使用 `/BKSite/blog/<slug>/`，原有文章链接不变。
 
 ## 本地运行
 
@@ -44,9 +49,25 @@ draft: false
 
 ## 修改资料和项目
 
-编辑 `src/data/site.ts`，更新昵称、介绍、头像地址和项目列表。初始内容来自 `binbinku` 的公开 GitHub 资料；项目采用静态快照，不在访客浏览时请求 GitHub API。头像使用 GitHub 头像 CDN。没有配置邮箱、简历或其他未提供的资料。
+编辑 `src/data/site.ts`，更新昵称、介绍、头像地址和项目列表。个人资料来自 `binbinku` 的公开 GitHub 资料；项目顺序和列表来自 2026-10-29 的 GitHub 主页置顶快照。未来置顶发生变化时，更新此文件及素材即可，网站不在访客浏览时请求 GitHub API。头像使用 GitHub 头像 CDN。没有配置邮箱、简历或其他未提供的资料。
 
-配色和响应式样式位于 `src/styles/global.css`。网站默认采用 Codex 风格的暖白与灰黑配色，保留深色主题；切换结果保存在浏览器本地。布局参考 Aurora 的精选文章、封面卡片与作者侧栏，在 Astro 中独立实现。字体通过 Google Fonts 加载，网络不可用时使用系统字体。
+配色和响应式样式位于 `src/styles/global.css`。视觉参考 Vercel / Geist 的黑白、网格与细边界。所有页面默认深色，内容页保留深浅色切换；入口固定深色，不改变内容页手动选择的主题。主题偏好使用新版 `bk-theme-v2` 存储键，旧版默认浅色状态不再影响此版本。字体使用 Google Fonts 的 Geist / Geist Mono，网络不可用时回退到系统字体。
+
+## 全屏入口与项目素材
+
+入口默认每 6.5 秒切换一次，支持六个项目选择按钮、上一项／下一项、暂停／播放和键盘左右方向键。键盘聚焦控件时暂停轮播，可用播放按钮恢复；页面不可见时暂停计时。系统设置为减少动态效果时默认暂停。关闭 JavaScript 后仍显示第一个项目并可正常进入主页。
+
+项目素材保存于 `public/images/projects/`，均来自用户自己的对应公开仓库，来源如下：
+
+| 本地文件 | 来源仓库路径 |
+| --- | --- |
+| `project-manager.png` | `binbinku/BKProjectManager` → `docs/assets/workbench-dark.png` |
+| `device-monitor.jpg` | `binbinku/BKDeviceMonitor` → `docs/screenshots/overview.jpg` |
+| `app-switch.png` | `binbinku/BKAppSwitch` → `docs/images/window-switcher.png` |
+| `clean-helper.svg` | `binbinku/BKCleanHelper` → `docs/images/overlay.svg` |
+| `eft-tools.png` | `binbinku/BKEFTTools` → `Data/Start.png` |
+
+DX11Template 没有项目截图，使用本站绘制并明确标注的几何示意图。BKCleanHelper 素材本身是仓库的界面示意图；BKAppSwitch 素材使用仓库提供的演示数据。图片不依赖第三方图床或运行时 API。
 
 ## 首次部署
 
@@ -68,4 +89,4 @@ gh api --method POST repos/binbinku/BKSite/pages -f build_type=workflow
 
 ## 页面
 
-首页、博客列表、文章详情、标签归档、项目、关于、404 和 sitemap 均为静态文件，无需服务器、数据库或运行时密钥。GitHub Pages 的 `404.html` 为真实错误页，不采用 SPA 重写。
+全屏入口、内容主页、笔记列表、文章详情、标签归档、项目、关于、404 和 sitemap 均为静态文件，无需服务器、数据库或运行时密钥。GitHub Pages 的 `404.html` 为真实错误页，不采用 SPA 重写。

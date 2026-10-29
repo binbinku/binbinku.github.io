@@ -18,6 +18,7 @@ test('production pages have valid base paths, canonical URLs, local resources an
   for (const file of pages) {
     const html = await readFile(file, 'utf8');
     assert.match(html, /<html[^>]+lang="zh-CN"/);
+    assert.match(html, /<html[^>]+data-theme="dark"/, 'every page defaults to the dark theme');
     assert.match(html, /rel="canonical" href="https:\/\/binbinku\.github\.io\/BKSite\//);
     for (const match of html.matchAll(/\b(?:href|src)="([^"]+)"/g)) {
       const url = match[1].replaceAll('&amp;', '&');
@@ -60,7 +61,7 @@ test('adding Markdown generates dated lists, encoded tag archives, adjacent link
     const astro = await realpath(join(root, 'node_modules/.bin/astro'));
     execFileSync(process.execPath, [astro, 'build', '--root', temporary], { cwd: temporary, stdio: 'pipe', timeout: 120000, env: { ...process.env, ASTRO_TELEMETRY_DISABLED: '1' } });
     const built = join(temporary, 'dist');
-    const listing = await readFile(join(built, 'blog/index.html'), 'utf8');
+    const listing = await readFile(join(built, 'writing/index.html'), 'utf8');
     assert.ok(listing.indexOf('新文章验收') < listing.indexOf('旧文章验收'), 'newest first');
     assert.ok(!listing.includes('不可公开的草稿'));
     assert.match(listing, /src="\/BKSite\/_astro\/workspace[^\"]+\.svg"/, 'custom cover is generated with the deployment base');

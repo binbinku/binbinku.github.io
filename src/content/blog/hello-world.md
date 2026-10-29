@@ -14,7 +14,7 @@ draft: false
 
 不必等到所有事情都想清楚，先从一段代码、一份笔记开始。
 
-![暖白背景与几何圆环上的 Build. Learn. Keep exploring. 插画](../../assets/workspace.svg)
+![黑白网格上的 Build. Learn. Keep exploring. 插画](../../assets/workspace.svg)
 
 ## 这个网站如何工作
 

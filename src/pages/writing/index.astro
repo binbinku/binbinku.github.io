@@ -1,0 +1,8 @@
+---
+import Base from '../../layouts/Base.astro';
+import PostList from '../../components/PostList.astro';
+import TopicBar from '../../components/TopicBar.astro';
+import { getPosts } from '../../data/posts';
+const posts = await getPosts();
+---
+<Base title="笔记" active="writing"><div class="container page-content blog-page"><header class="page-heading"><p class="eyebrow">OCCASIONAL NOTES</p><h1>一些记录。<span>一路探索。</span></h1><p>项目之外，偶尔整理代码、工具与想法。</p></header><TopicBar posts={posts}/>{posts.length ? <PostList posts={posts} headingLevel="h2"/> : <p class="empty-state">还没有发布笔记，敬请期待。</p>}</div></Base>

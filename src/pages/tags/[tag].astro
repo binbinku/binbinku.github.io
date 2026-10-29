@@ -2,7 +2,6 @@
 import Base from '../../layouts/Base.astro';
 import PostList from '../../components/PostList.astro';
 import TopicBar from '../../components/TopicBar.astro';
-import BlogSidebar from '../../components/BlogSidebar.astro';
 import { getPosts } from '../../data/posts';
 import { href } from '../../data/paths';
 export async function getStaticPaths() {
@@ -11,9 +10,9 @@ export async function getStaticPaths() {
 }
 const { tag, posts, allPosts } = Astro.props;
 ---
-<Base title={`标签：${tag}`} active="blog">
-  <div class="container page-content">
-    <header class="page-heading"><a class="back-link" href={href('blog/')}>← 所有文章</a><p class="eyebrow">TOPIC / {posts.length} 篇文章</p><h1><span class="heading-hash">#</span> {tag}</h1><p>与「{tag}」有关的笔记，都在这里。</p></header>
-    <div class="content-layout"><div class="main-feed"><TopicBar posts={allPosts} active={tag}/><PostList posts={posts} headingLevel="h2"/></div><aside class="content-sidebar" aria-label="作者与话题"><BlogSidebar/></aside></div>
+<Base title={`标签：${tag}`} active="writing">
+  <div class="container page-content blog-page">
+    <header class="page-heading"><a class="back-link" href={href('writing/')}>← 所有笔记</a><p class="eyebrow">TOPIC / {posts.length} 篇文章</p><h1><span class="heading-hash">#</span> {tag}</h1><p>与「{tag}」有关的笔记，都在这里。</p></header>
+    <TopicBar posts={allPosts} active={tag}/><PostList posts={posts} headingLevel="h2"/>
   </div>
 </Base>
