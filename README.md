@@ -1,11 +1,11 @@
 # BK · 构建有用的东西
 
-以开源项目与个人展示为主的中文网站。Astro + TypeScript，部署到 **https://binbinku.github.io/BKSite/**。
+以开源项目与个人展示为主的中文网站。Astro + TypeScript，部署到 **https://binbinku.github.io/**。
 
-- `/BKSite/`：全屏沉浸式作品入口，循环展示六个 GitHub 置顶项目；点击展示区进入主页。
-- `/BKSite/blog/`：三栏内容主页：左侧个人信息，中间 GitHub 置顶项目，右侧最近文章列表。平板采用两栏，手机按个人、项目、文章顺序纵向排列。
-- `/BKSite/projects/`、`/BKSite/about/`：项目与个人详细介绍。
-- `/BKSite/writing/`：笔记归档；既有文章仍使用 `/BKSite/blog/<slug>/`，原有文章链接不变。
+- `/`：全屏沉浸式作品入口，循环展示六个 GitHub 置顶项目；点击展示区进入主页。
+- `/blog/`：三栏内容主页：左侧个人信息，中间 GitHub 置顶项目，右侧最近文章列表。平板采用两栏，手机按个人、项目、文章顺序纵向排列。
+- `/projects/`、`/about/`：项目与个人详细介绍。
+- `/writing/`：笔记归档；文章详情位于 `/blog/<slug>/`。
 
 ## 本地运行
 
@@ -16,7 +16,7 @@ npm ci
 npm run dev
 ```
 
-打开终端显示的 `http://127.0.0.1:4321/BKSite/`。站点使用 `/BKSite/` 前缀，本地预览也需要该前缀。
+打开终端显示的 `http://127.0.0.1:4321/`。站点直接部署在域名根目录，本地预览也使用根路径。
 
 ```sh
 npm run check   # 类型和 Astro 检查
@@ -41,7 +41,7 @@ draft: false
 
 在 frontmatter 下写 Markdown 正文。二级、三级标题自动生成目录，代码块标记语言即可高亮；文章按日期倒序，自动生成标签归档和相邻文章导航。`draft: true` 不会生成公开页面，也不会出现在文章列表、标签或 sitemap 中。本地也隐藏草稿；写作预览时临时设为 `false`，提交前确认状态。
 
-图片推荐放入 `src/assets/`，在 Markdown 中使用相对路径，例如 `../../assets/workspace.svg`。Astro 会生成适配 `/BKSite/` 的图片地址。`public/` 中的文件需要在 Markdown 中手动使用 `/BKSite/images/文件名`。
+图片推荐放入 `src/assets/`，在 Markdown 中使用相对路径，例如 `../../assets/workspace.svg`。Astro 会生成适配 `/` 的图片地址。`public/` 中的文件需要在 Markdown 中手动使用 `/images/文件名`。
 
 可在 frontmatter 中添加可选的 `cover: '../../assets/your-cover.jpg'`，为文章设置封面。图片由 Astro 处理并适配部署路径；未设置时使用本站自绘的中性几何封面。
 
@@ -80,19 +80,19 @@ DX11Template 没有项目截图，使用本站绘制并明确标注的几何示�
 
 1. 确保 GitHub CLI 登录到 `binbinku`，具备创建仓库、推送工作流和管理 Pages 的权限：`gh auth login --hostname github.com`，然后 `gh auth status`。
 2. 如尚未初始化 Git：`git init -b main`，随后 `git add .` 和 `git commit -m "Build BK personal website"`。
-3. 若 `binbinku/BKSite` 尚不存在：`gh repo create binbinku/BKSite --public --source=. --remote=origin --push`。若仓库已存在，先检查其内容，确认安全后再关联和推送；不要覆盖已有历史。
+3. 若 `binbinku/binbinku.github.io` 尚不存在：`gh repo create binbinku/binbinku.github.io --public --source=. --remote=origin --push`。若仓库已存在，先检查其内容，确认安全后再关联和推送；不要覆盖已有历史。
 4. 仓库 **Settings → Pages → Build and deployment → Source** 选择 **GitHub Actions**。也可使用有管理权限的 CLI：
 
 ```sh
-gh api --method POST repos/binbinku/BKSite/pages -f build_type=workflow
+gh api --method POST repos/binbinku/binbinku.github.io/pages -f build_type=workflow
 ```
 
-5. 如果首次推送早于 Pages 启用，手动运行 `gh workflow run deploy.yml --repo binbinku/BKSite`。
+5. 如果首次推送早于 Pages 启用，手动运行 `gh workflow run deploy.yml --repo binbinku/binbinku.github.io`。
 6. 在 Actions 中确认构建和部署成功，访问线上首页与任一文章，再提交一次内容修改验证自动更新。
 
 后续提交并推送 `main` 即会自动检查、构建和部署。检查或构建失败不会替换已发布版本。紧急回退可以撤销有问题的提交后推送，重新触发部署。
 
-默认主域名和 `/BKSite` 前缀在 `astro.config.mjs` 中配置；站内链接使用统一路径函数。若迁移仓库或域名，需同步修改这两项。当前未配置自定义域名、评论、搜索、RSS 或后台。
+主域名和根路径 `base: '/'` 在 `astro.config.mjs` 中配置；站内链接使用统一路径函数。若迁移仓库或域名，需同步修改这两项。当前未配置自定义域名、评论、搜索、RSS 或后台。
 
 ## 页面
 

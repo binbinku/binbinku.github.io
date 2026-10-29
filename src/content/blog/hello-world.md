@@ -80,7 +80,7 @@ npm ci
 npm run dev
 ```
 
-在浏览器打开 `http://127.0.0.1:4321/BKSite/`。修改 Markdown 后，可以直接查看更新效果。提交之前，运行检查、构建和内容测试：
+在浏览器打开 `http://127.0.0.1:4321/`。修改 Markdown 后，可以直接查看更新效果。提交之前，运行检查、构建和内容测试：
 
 ```sh
 npm run check
@@ -88,7 +88,7 @@ npm run build
 npm test
 ```
 
-把修改推送到 `main` 分支，GitHub Actions 就会自动发布。构建成功后，可在 [网站首页](https://binbinku.github.io/BKSite/) 查看最新内容。
+把修改推送到 `main` 分支，GitHub Actions 就会自动发布。构建成功后，可在 [网站首页](https://binbinku.github.io/) 查看最新内容。
 
 ## 下一次更新
 

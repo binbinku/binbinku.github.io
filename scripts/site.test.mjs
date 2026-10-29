@@ -22,7 +22,7 @@ test('production pages have valid base paths, canonical URLs, local resources an
     const html = await readFile(file, 'utf8');
     assert.match(html, /<html[^>]+lang="zh-CN"/);
     assert.match(html, /<html[^>]+data-theme="dark"/, 'every page defaults to the dark theme');
-    assert.match(html, /rel="canonical" href="https:\/\/binbinku\.github\.io\/BKSite\//);
+    assert.match(html, /rel="canonical" href="https:\/\/binbinku\.github\.io\//);
     for (const match of html.matchAll(/\b(?:href|src)="([^"]+)"/g)) {
       const url = match[1].replaceAll('&amp;', '&');
       if (/^(https?:|data:|mailto:|tel:)/.test(url)) continue;
@@ -31,8 +31,8 @@ test('production pages have valid base paths, canonical URLs, local resources an
         assert.ok(html.includes(`id="${id}"`), `${file}: missing anchor ${id}`);
         continue;
       }
-      assert.ok(url.startsWith('/BKSite/'), `${file}: resource missing base: ${url}`);
-      const pathname = decodeURIComponent(url.split(/[?#]/)[0].slice('/BKSite/'.length));
+      assert.ok(url.startsWith('/') && !url.startsWith('//') && !url.startsWith('/BKSite/'), `${file}: resource must use the site root: ${url}`);
+      const pathname = decodeURIComponent(url.split(/[?#]/)[0].slice('/'.length));
       const candidate = join(dist, pathname);
       const info = await stat(candidate).catch(() => null);
       assert.ok(info, `${file}: missing resource ${url}`);
@@ -42,7 +42,8 @@ test('production pages have valid base paths, canonical URLs, local resources an
   assert.ok(pages.includes(join(dist, '404.html')));
   const sitemap = await readFile(join(dist, 'sitemap-0.xml'), 'utf8');
   assert.ok(!sitemap.includes('/404'));
-  assert.match(sitemap, /https:\/\/binbinku\.github\.io\/BKSite\//);
+  assert.ok(!sitemap.includes('/BKSite/'), 'sitemap uses the root domain');
+  assert.match(sitemap, /https:\/\/binbinku\.github\.io\//);
 });
 
 test('adding Markdown generates dated lists, encoded tag archives, adjacent links; drafts stay private', async () => {
@@ -67,11 +68,11 @@ test('adding Markdown generates dated lists, encoded tag archives, adjacent link
     const listing = await readFile(join(built, 'writing/index.html'), 'utf8');
     assert.ok(listing.indexOf('新文章验收') < listing.indexOf('旧文章验收'), 'newest first');
     assert.ok(!listing.includes('不可公开的草稿'));
-    assert.match(listing, /src="\/BKSite\/_astro\/workspace[^\"]+\.svg"/, 'custom cover is generated with the deployment base');
+    assert.match(listing, /src="\/_astro\/workspace[^\"]+\.svg"/, 'custom cover is generated with the deployment base');
     const older = await readFile(join(built, 'blog/fixture-old/index.html'), 'utf8');
     const newer = await readFile(join(built, 'blog/fixture-new/index.html'), 'utf8');
-    assert.match(older, /href="\/BKSite\/blog\/fixture-new\/"/);
-    assert.match(newer, /href="\/BKSite\/blog\/fixture-old\/"/);
+    assert.match(older, /href="\/blog\/fixture-new\/"/);
+    assert.match(newer, /href="\/blog\/fixture-old\/"/);
     assert.ok(older.includes('文章目录') && older.includes('测试章节'));
     const tag = await readFile(join(built, 'tags/验收 标签/index.html'), 'utf8');
     assert.ok(tag.includes('新文章验收') && tag.includes('旧文章验收'));

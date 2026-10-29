@@ -3,7 +3,7 @@ import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
   site: 'https://binbinku.github.io',
-  base: '/BKSite',
+  base: '/',
   trailingSlash: 'always',
   output: 'static',
   integrations: [sitemap({ filter: (page) => !page.endsWith('/404/') })],
