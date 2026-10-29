@@ -1,6 +1,8 @@
 ---
 import Base from '../../layouts/Base.astro';
 import ProjectCard from '../../components/ProjectCard.astro';
+import PersonalProjectCard from '../../components/PersonalProjectCard.astro';
+import { personalProjects } from '../../data/personal-projects';
 import Icon from '../../components/Icon.astro';
 import { profile, projects } from '../../data/site';
 import { href, postHref, formatDate } from '../../data/paths';
@@ -19,10 +21,16 @@ const posts = await getPosts();
       <a class="button button-secondary hub-github" href={profile.github} target="_blank" rel="noopener noreferrer"><Icon name="github" size={16}/>GitHub<span>↗</span></a>
       <div class="hub-profile-links"><a href={href('about/')}>更多关于我 <span>→</span></a><a href={href()}>作品放映 <span>↗</span></a></div>
     </aside>
-    <section class="hub-main" aria-labelledby="projects-title">
+    <div class="hub-main">
+    <section aria-labelledby="projects-title">
       <header class="hub-heading"><p class="eyebrow">PINNED ON GITHUB</p><div><h2 id="projects-title">开源项目</h2><a class="section-link" href={href('projects/')}>全部项目 <span>↗</span></a></div><p>把日常问题，做成实用工具。</p></header>
       <div class="project-grid">{projects.map((project, index) => <ProjectCard project={project} index={index}/>)}</div>
     </section>
+    <section class="hub-personal" id="personal-projects" aria-labelledby="personal-projects-title">
+      <header class="hub-heading"><p class="eyebrow">PERSONAL PROJECTS</p><h2 id="personal-projects-title">个人项目</h2><p>游戏开发与引擎实践。</p></header>
+      <div class="project-grid">{personalProjects.map((project, index) => <PersonalProjectCard project={project} index={index}/>)}</div>
+    </section>
+    </div>
     <aside class="hub-articles" aria-labelledby="notes-title">
       <header class="hub-heading"><p class="eyebrow">NOTES & IDEAS</p><h2 id="notes-title">文章列表</h2><p>偶尔记录，也持续探索。</p></header>
       {posts.length ? <ol class="hub-article-list">{posts.slice(0, 6).map(post => <li><a href={postHref(post.id)}><time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time><h3>{post.data.title}</h3><p>{post.data.description}</p><span class="hub-read">阅读全文 <span>↗</span></span></a></li>)}</ol> : <p class="empty-state">项目在更新，笔记慢慢写。</p>}

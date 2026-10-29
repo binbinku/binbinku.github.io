@@ -1,0 +1,27 @@
+---
+import Base from '../../layouts/Base.astro';
+import { personalProjects, personalProjectSource, type PersonalProject } from '../../data/personal-projects';
+import { href } from '../../data/paths';
+export function getStaticPaths() {
+  return personalProjects.map(project => ({ params: { slug: project.id }, props: { project } }));
+}
+interface Props { project: PersonalProject }
+const { project } = Astro.props;
+---
+<Base title={project.name} description={project.description} active="home">
+  <article class="container page-content personal-detail">
+    <header class="page-heading">
+      <a class="back-link" href={href('blog/#personal-projects')}>← 返回个人项目</a>
+      <p class="eyebrow">PERSONAL PROJECT</p>
+      <h1>{project.name}</h1>
+      <p>{project.description}</p>
+    </header>
+    <ul class="personal-stack" aria-label="项目技术">{project.stack.map(item => <li>{item}</li>)}</ul>
+    <section class="personal-screenshots" aria-labelledby="screenshots-title">
+      <h2 id="screenshots-title">项目截图</h2>
+      <div class="personal-gallery">{project.images.map((image, index) => <figure><a href={href(image.src)} target="_blank" rel="noopener noreferrer" aria-label={`${image.alt}（打开原图）`}><img src={href(image.src)} alt={image.alt} loading={index === 0 ? 'eager' : 'lazy'} decoding="async" width="1280" height="720" /></a><figcaption>{image.alt.split(' · ')[1]}</figcaption></figure>)}</div>
+    </section>
+    <section class="personal-features" aria-labelledby="features-title"><h2 id="features-title">功能与实现</h2><ul>{project.features.map(feature => <li>{feature}</li>)}</ul></section>
+    <a class="section-link personal-source" href={personalProjectSource} target="_blank" rel="noopener noreferrer">原始项目资料 <span>↗</span></a>
+  </article>
+</Base>

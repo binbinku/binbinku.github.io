@@ -1,0 +1,81 @@
+{
+  "project-manager": {
+    "repositoryUrl": "https://github.com/binbinku/BKProjectManager",
+    "sourceUrl": "https://github.com/binbinku/BKProjectManager/blob/5cf3ff8e0c44fb883e861e4774f86130015f869c/README.md",
+    "readmePath": "README.md",
+    "commit": "5cf3ff8e0c44fb883e861e4774f86130015f869c",
+    "assets": {
+      "docs/assets/logo.svg": "/images/readmes/project-manager/docs/assets/logo.svg",
+      "docs/assets/themes-dark.png": "/images/readmes/project-manager/docs/assets/themes-dark.png",
+      "docs/assets/themes-light.png": "/images/readmes/project-manager/docs/assets/themes-light.png",
+      "docs/assets/remove-dark.png": "/images/readmes/project-manager/docs/assets/remove-dark.png",
+      "docs/assets/category-light.png": "/images/readmes/project-manager/docs/assets/category-light.png",
+      "docs/assets/settings-dark.png": "/images/readmes/project-manager/docs/assets/settings-dark.png",
+      "docs/assets/welcome.png": "/images/readmes/project-manager/docs/assets/welcome.png",
+      "docs/assets/remove-light.png": "/images/readmes/project-manager/docs/assets/remove-light.png",
+      "docs/assets/workspace-light.png": "/images/readmes/project-manager/docs/assets/workspace-light.png",
+      "docs/assets/category-dark.png": "/images/readmes/project-manager/docs/assets/category-dark.png",
+      "docs/assets/workspace-dark.png": "/images/readmes/project-manager/docs/assets/workspace-dark.png",
+      "docs/assets/list-dark.png": "/images/readmes/project-manager/docs/assets/list-dark.png",
+      "docs/assets/workbench-dark.png": "/images/readmes/project-manager/docs/assets/workbench-dark.png",
+      "docs/assets/workbench-light.png": "/images/readmes/project-manager/docs/assets/workbench-light.png"
+    }
+  },
+  "device-monitor": {
+    "repositoryUrl": "https://github.com/binbinku/BKDeviceMonitor",
+    "sourceUrl": "https://github.com/binbinku/BKDeviceMonitor/blob/a7d8c08ec9bec96668884aff6e13325c83c5ce8f/README.md",
+    "readmePath": "README.md",
+    "commit": "a7d8c08ec9bec96668884aff6e13325c83c5ce8f",
+    "assets": {
+      "docs/assets/hero.svg": "/images/readmes/device-monitor/docs/assets/hero.svg",
+      "docs/assets/platform.svg": "/images/readmes/device-monitor/docs/assets/platform.svg",
+      "docs/assets/license.svg": "/images/readmes/device-monitor/docs/assets/license.svg",
+      "docs/assets/runtime.svg": "/images/readmes/device-monitor/docs/assets/runtime.svg",
+      "docs/screenshots/overview.jpg": "/images/readmes/device-monitor/docs/screenshots/overview.jpg",
+      "docs/screenshots/hardware.jpg": "/images/readmes/device-monitor/docs/screenshots/hardware.jpg"
+    }
+  },
+  "app-switch": {
+    "repositoryUrl": "https://github.com/binbinku/BKAppSwitch",
+    "sourceUrl": "https://github.com/binbinku/BKAppSwitch/blob/47126110791fa174e806c0887ee0fdd94d635ad0/README.md",
+    "readmePath": "README.md",
+    "commit": "47126110791fa174e806c0887ee0fdd94d635ad0",
+    "assets": {
+      "docs/images/logo.svg": "/images/readmes/app-switch/docs/images/logo.svg",
+      "docs/images/how-it-works.zh.svg": "/images/readmes/app-switch/docs/images/how-it-works.zh.svg",
+      "docs/images/banner.zh.svg": "/images/readmes/app-switch/docs/images/banner.zh.svg",
+      "docs/images/window-switcher.png": "/images/readmes/app-switch/docs/images/window-switcher.png"
+    }
+  },
+  "clean-helper": {
+    "repositoryUrl": "https://github.com/binbinku/BKCleanHelper",
+    "sourceUrl": "https://github.com/binbinku/BKCleanHelper/blob/b93a832ed7159d72ccfaa5c51c04c775a0de09c8/README.md",
+    "readmePath": "README.md",
+    "commit": "b93a832ed7159d72ccfaa5c51c04c775a0de09c8",
+    "assets": {
+      "docs/images/flow.zh.svg": "/images/readmes/clean-helper/docs/images/flow.zh.svg",
+      "docs/images/architecture.zh.svg": "/images/readmes/clean-helper/docs/images/architecture.zh.svg",
+      "docs/images/overlay.svg": "/images/readmes/clean-helper/docs/images/overlay.svg",
+      "docs/images/icon.png": "/images/readmes/clean-helper/docs/images/icon.png"
+    }
+  },
+  "dx11-template": {
+    "repositoryUrl": "https://github.com/binbinku/DX11Template",
+    "sourceUrl": "https://github.com/binbinku/DX11Template/blob/dda6d03affbafd3fccb4182f07445281a12c210f/README.md",
+    "readmePath": "README.md",
+    "commit": "dda6d03affbafd3fccb4182f07445281a12c210f",
+    "assets": {}
+  },
+  "eft-tools": {
+    "repositoryUrl": "https://github.com/binbinku/BKEFTTools",
+    "sourceUrl": "https://github.com/binbinku/BKEFTTools/blob/8cc92b37e95b753f8316ae722aa61efc7497b9ec/Readme.md",
+    "readmePath": "Readme.md",
+    "commit": "8cc92b37e95b753f8316ae722aa61efc7497b9ec",
+    "assets": {
+      "Data/Start.png": "/images/readmes/eft-tools/Data/Start.png",
+      "Data/ItemDB.png": "/images/readmes/eft-tools/Data/ItemDB.png",
+      "Data/UserPreset.png": "/images/readmes/eft-tools/Data/UserPreset.png",
+      "Data/ItemPreset.png": "/images/readmes/eft-tools/Data/ItemPreset.png"
+    }
+  }
+}

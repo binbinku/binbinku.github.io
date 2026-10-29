@@ -1,0 +1,51 @@
+[
+  {
+    "name": "Unity 多人射击游戏项目",
+    "desc": "类塔科夫多人硬核射击游戏，基于 HDRP，Mirror开源多人联机插件",
+    "infos": [
+      "类塔科夫物品管理架构，物品信息数据库，预制体信息数据库，武器预设信息数据库，商人数据库。",
+      "类塔科夫不规则物品库存系统，支持各种武器装备配件，武器配件灵活组装。",
+      "类 Dayz 基于商人的商店系统，武器商人，配件商人等，灵活的商店管理。",
+      "类塔科夫玩家控制器(FP/TP)，拟真惯性模拟，拟真后坐力模拟，IK解算。",
+      "类使命召唤 武器骨骼，手臂骨骼，骨骼动画分离存储动态切换，分离存储，方便编辑。",
+      "类塔科夫 武器配件插槽组装系统，完善的物品面向对象架构。",
+      "拟真高倍瞄准镜系统(Shader)，境内放大，视差模拟。",
+      "灵活的自定义 物品，预制体，预设 编辑器扩展工具，方便物品信息管理。",
+      "类塔科夫 物品Icon渲染系统，RenderToTexture。",
+      "使用 单例模式和侦察者模式 解耦架构。",
+      "基于Mirror(HLAPI) 的多人联机，包括人物，武器，配件，子弹，健康状态同步。",
+      "基于Addressable 的资源管理，Json 序列化存储。使用Git 进行版本管理。"
+    ],
+    "images": [
+      "./images/proj_fps/zip_test1.jpg",
+      "./images/proj_fps/zip_test2.jpg",
+      "./images/proj_fps/zip_test3.jpg",
+      "./images/proj_fps/zip_test4.jpg"
+    ]
+  },
+  {
+    "name": "自研C++游戏引擎项目",
+    "desc": "基于DirectX11, Win32，C++开发的一款简单的游戏引擎，具有类Unity组件式架构，材质系统，光照系统，相机模块，资产管理，骨骼蒙皮动画，场景管理，脚本系统，编辑器UI等功能。",
+    "infos": [
+      "实现 类 Unity组件式架构 GameObject，Component。",
+      "实现 类 Unity ShaderGraph, Material  的可配置Shader, Material 管理系统",
+      "实现 类 Unity Transform 的骨骼，蒙皮动画系统，灵活进行动画控制。",
+      "实现 类 Unity 的 Transform，MeshRenderer 等组件。",
+      "实现 基于 Lua / SOL3 的脚本系统，脚本挂载，执行，实例化。",
+      "实现 基本的 引擎内 Log 系统，方便运行时和编辑器调试。",
+      "实现 基于 Phong/PBR 的光照模型，包括点光，方向光，球形天空盒渲染，反射。",
+      "实现 类 Unity 的场景编辑器工具，提示场景编辑效率。",
+      "实现 基本的场景加载卸载，使用Json序列化存储。",
+      "实现 基本的资产管理，模型，贴图，材质，着色器，Lua脚本。",
+      "使用 Dear ImGui 实现类似Unity 游戏引擎UI界面绘制。",
+      "使用 Assimp SDK进行模型各种格式的模型，动画，材质加载。",
+      "使用 Git/GitHub 进行版本管理和代码托管。"
+    ],
+    "images": [
+      "./images/proj_engine/zip_GamePlay.jpg",
+      "./images/proj_engine/zip_MainUI.jpg",
+      "./images/proj_engine/zip_Material编辑器.jpg",
+      "./images/proj_engine/zip_Shader编辑器.jpg"
+    ]
+  }
+]

@@ -13,4 +13,8 @@ const blog = defineCollection({
     cover: image().optional(),
   }),
 });
-export const collections = { blog };
+const projectReadmes = defineCollection({
+  loader: glob({ pattern: '*.md', base: './src/content/project-readmes' }),
+  schema: z.object({ projectId: z.string(), sourceUrl: z.url(), syncedAt: z.string() }),
+});
+export const collections = { blog, projectReadmes };

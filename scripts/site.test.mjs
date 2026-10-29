@@ -7,6 +7,7 @@ import { execFileSync } from 'node:child_process';
 
 import { createShowcaseFrames } from '../src/data/showcase.ts';
 import { getProjectImages, projects } from '../src/data/site.ts';
+import { prepareReadme } from './project-readme-plugin.mjs';
 
 const root = resolve(import.meta.dirname, '..');
 const dist = join(root, 'dist');
@@ -49,7 +50,7 @@ test('production pages have valid base paths, canonical URLs, local resources an
 test('adding Markdown generates dated lists, encoded tag archives, adjacent links; drafts stay private', async () => {
   const temporary = await realpath(await mkdtemp(join(tmpdir(), 'bksite-content-test-')));
   try {
-    for (const name of ['src', 'public', 'package.json', 'astro.config.mjs', 'tsconfig.json']) {
+    for (const name of ['src', 'public', 'scripts', 'package.json', 'astro.config.mjs', 'tsconfig.json']) {
       await cp(join(root, name), join(temporary, name), { recursive: true });
     }
     await symlink(join(root, 'node_modules'), join(temporary, 'node_modules'), 'dir');
@@ -101,4 +102,47 @@ test('showcase finishes each project gallery, caps at three images and preserves
   ] });
   assert.deepEqual(images.map(image => image.src), [project.image, 'second.png', 'third.png']);
   assert.deepEqual(projects.map(project => getProjectImages(project).length), [3, 2, 1, 1, 0, 3]);
+});
+
+test('README rendering preserves local pictures and anchors while removing executable HTML', () => {
+  const element = (tagName, properties = {}, children = []) => ({ type: 'element', tagName, properties, children });
+  const text = value => ({ type: 'text', value });
+  const tree = { type: 'root', children: [
+    element('h2', {}, [text('Quick start')]),
+    element('a', { href: '#quick-start' }, [text('Jump')]),
+    element('a', { href: 'README.en.md' }, [text('English')]),
+    element('img', { src: 'docs/picture.png', width: 80, onError: 'alert(1)' }),
+    element('a', { href: 'javascript:alert(1)' }, [text('Unsafe')]),
+    element('script', {}, [text('alert(1)')]),
+    { type: 'raw', value: '<picture><source srcset="docs/picture.png" media="(prefers-color-scheme: dark)"><img src="docs/picture.png" onerror="alert(1)"></picture><details><summary>More</summary><p>Details</p></details>' },
+    element('span', { style: 'color:#fff;background-image:url(javascript:alert(1))' }, [text('Code')]),
+  ] };
+  const clean = prepareReadme(tree, {
+    sourceUrl: 'https://github.com/example/tool/blob/abc/README.md',
+    assets: { 'docs/picture.png': '/images/readmes/tool/picture.png' },
+  });
+  assert.equal(clean.children[0].properties.id, 'readme-quick-start');
+  assert.equal(clean.children[1].properties.href, '#readme-quick-start');
+  assert.equal(clean.children[2].properties.href, 'https://github.com/example/tool/blob/abc/README.en.md');
+  assert.equal(clean.children[3].properties.src, '/images/readmes/tool/picture.png');
+  assert.equal(clean.children[3].properties.width, 80);
+  const html = JSON.stringify(clean);
+  assert.ok(!html.includes('onError') && !html.includes('javascript:') && !html.includes('"script"'));
+  assert.ok(html.includes('picture') && html.includes('summary'), 'HTML pictures and collapsible content remain');
+  assert.ok(!html.includes('docs/picture.png'), 'HTML image paths are rewritten');
+  assert.ok(html.includes('color:#fff'), 'syntax token colors remain');
+  assert.equal(tree.children[0].properties.id, undefined, 'source tree is unchanged');
+});
+
+test('every project card opens a README page and HTML screenshots survive rendering', async () => {
+  const home = await readFile(join(dist, 'blog/index.html'), 'utf8');
+  const metadata = JSON.parse(await readFile(join(root, 'src/data/project-readmes.json'), 'utf8'));
+  for (const project of projects) {
+    assert.ok(home.includes(`href="/projects/${project.id}/"`));
+    const html = await readFile(join(dist, `projects/${project.id}/index.html`), 'utf8');
+    assert.ok(html.includes('project-readme') && html.includes(project.url));
+    if (Object.keys(metadata[project.id].assets).length) {
+      assert.match(html, /src="\/images\/readmes\//, `${project.name}: README screenshots were preserved`);
+    }
+  }
 });

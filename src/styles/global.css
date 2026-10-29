@@ -131,6 +131,11 @@ h1, h2, h3, p { margin: 0; }
 .hub-profile-links > a:hover { color: var(--text); }
 .hub-profile-links > a > span { color: var(--subtle); }
 .hub-main { grid-area: projects; min-width: 0; }
+.hub-personal { margin-top: 60px; }
+.personal-card .project-visual img { object-fit: cover; }
+.hub-main .personal-card .project-body h3 { line-height: 1.7; letter-spacing: -.2px; }
+.personal-card .project-bottom { gap: 10px; }
+.personal-card .project-source { white-space: nowrap; }
 .hub-heading { margin-bottom: 27px; }
 .hub-heading .eyebrow { font-size: 8px; letter-spacing: 1px; margin-bottom: 14px; }
 .hub-heading > div { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
@@ -510,3 +515,42 @@ h1, h2, h3, p { margin: 0; }
   .hub-main .project-body > p { font-size: 12px; }
   .hub-article-list h3 { font-size: 16px; }
 }
+
+/* Personal projects retain their original feature lists and screenshots. */
+.personal-detail .page-heading { max-width: 900px; }
+.personal-stack { display: flex; flex-wrap: wrap; gap: 10px; margin: 0 0 42px; padding: 0; list-style: none; }
+.personal-stack li { font: 10px var(--mono); color: var(--muted); padding: 6px 10px; background: var(--soft); border-radius: 4px; }
+.personal-detail section > h2 { font-size: 22px; font-weight: 550; margin-bottom: 23px; }
+.personal-gallery { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 25px; }
+.personal-gallery figure { margin: 0; min-width: 0; }
+.personal-gallery a { display: block; border-radius: 7px; overflow: hidden; background: #111; }
+.personal-gallery img { width: 100%; aspect-ratio: 16/9; object-fit: contain; }
+.personal-gallery figcaption { color: var(--subtle); font-size: 10px; margin-top: 10px; }
+.personal-features { margin-top: 48px; }
+.personal-features ul { padding-left: 19px; margin: 0; display: grid; gap: 14px; }
+.personal-features li { color: var(--muted); font-size: 13px; line-height: 2; padding-left: 4px; overflow-wrap: anywhere; }
+.personal-source { margin-top: 35px; }
+@media (max-width: 700px) {
+  .hub-personal { margin-top: 42px; }
+  .personal-gallery { grid-template-columns: minmax(0,1fr); gap: 22px; }
+  .personal-detail .page-heading h1 { font-size: 26px; }
+  .personal-features { margin-top: 35px; }
+  .personal-features li { font-size: 12px; }
+}
+
+.project-detail-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 21px; margin-top: 25px; }
+.readme-date { color: var(--subtle); font: 9px var(--mono); }
+.readme-without-toc { grid-template-columns: minmax(0,1fr); }
+.project-readme { min-width: 0; }
+.project-readme h1 { font-size: 30px; color: var(--text); line-height: 1.5; margin-block: 25px; }
+.project-readme h4 { color: var(--text); font-size: 16px; margin-block: 25px 12px; }
+.project-readme img { display: inline-block; vertical-align: middle; width: auto; max-width: 100%; height: auto; border: 0; border-radius: 4px; margin: 7px 3px 7px 0; }
+.project-readme picture { display: block; margin-block: 24px; }
+.project-readme picture img { display: block; width: 100%; }
+.project-readme table { display: block; max-width: 100%; overflow-x: auto; }
+.project-readme td { min-width: 140px; }
+.project-readme details { margin-block: 20px; padding: 15px 19px; border-radius: 6px; background: var(--soft); }
+.project-readme summary { cursor: pointer; color: var(--text); font-size: 13px; }
+.project-readme kbd { display: inline-block; font: 11px var(--mono); padding: 2px 6px; border: 1px solid var(--line); border-radius: 4px; background: var(--soft); }
+.project-readme hr { display: none; }
+.project-readme .task-list-item { list-style: none; }

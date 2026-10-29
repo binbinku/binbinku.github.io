@@ -3,8 +3,10 @@
 以开源项目与个人展示为主的中文网站。Astro + TypeScript，部署到 **https://binbinku.github.io/**。
 
 - `/`：全屏沉浸式作品入口，循环展示六个 GitHub 置顶项目；点击展示区进入主页。
-- `/blog/`：三栏内容主页：左侧个人信息，中间 GitHub 置顶项目，右侧最近文章列表。平板采用两栏，手机按个人、项目、文章顺序纵向排列。
+- `/blog/`：三栏内容主页：左侧个人信息，中间依次展示 GitHub 置顶项目与个人项目，右侧最近文章列表。平板采用两栏，手机按个人、项目、文章顺序纵向排列。
 - `/projects/`、`/about/`：项目与个人详细介绍。
+- `/projects/<slug>/`：开源项目 README 阅读页，提供源码与原始文档入口。
+- `/personal-projects/<slug>/`：个人项目详情，包含完整功能列表与截图。
 - `/writing/`：笔记归档；文章详情位于 `/blog/<slug>/`。
 
 ## 本地运行
@@ -52,6 +54,27 @@ draft: false
 编辑 `src/data/site.ts`，更新昵称、介绍、头像地址和项目列表。个人资料来自 `binbinku` 的公开 GitHub 资料；项目顺序和列表来自 2026-10-29 的 GitHub 主页置顶快照。未来置顶发生变化时，更新此文件及素材即可，网站不在访客浏览时请求 GitHub API。头像使用 GitHub 头像 CDN。没有配置邮箱、简历或其他未提供的资料。
 
 配色和响应式样式位于 `src/styles/global.css`。视觉参考 Vercel / Geist 的黑白与细边界，使用纯色背景，不添加网格、边缘框线或十字装饰。所有页面默认深色，内容页保留深浅色切换；入口固定深色，不改变内容页手动选择的主题。主题偏好使用新版 `bk-theme-v2` 存储键，旧版默认浅色状态不再影响此版本。字体使用 Google Fonts 的 Geist / Geist Mono，网络不可用时回退到系统字体。
+
+## 开源项目 README
+
+开源项目卡片进入本站 `/projects/<slug>/` 阅读 README，“查看源码”按钮打开对应 GitHub 仓库。文档快照在 `src/content/project-readmes/`，版本与图片映射在 `src/data/project-readmes.json`；相对图片复制到 `public/images/readmes/`，相对文档链接转换为原仓库地址。README 的目录、表格、代码高亮、图片、键盘标记与折叠问答均可阅读，HTML 经过清理后静态输出。
+
+仓库 README 更新后，使用已登录的 GitHub CLI 在本地执行：
+
+```sh
+npm run sync:readmes
+npm run check
+npm run build
+npm test
+```
+
+检查并提交更新的文档、图片及来源映射后发布。CI 和访客浏览都使用已保存的快照，不实时请求 GitHub API。README 中引用的第三方徽章仍使用原有图片地址。DX11Template 当前 README 只有项目标题，本站如实展示。
+
+## 个人项目资料
+
+主页中间栏的“个人项目”来自 `binbinku/bkprojectsite` 的 `public/data/proj.json`，固定版本为 `b0f5b2dd0d14c1b2a08e036702112a0d9639cd42`（2026-10-29 整理）。原始数据保存于 `src/data/personal-projects.json`，名称、介绍、功能条目及图片顺序保持原样；路由、技术标签和图片说明在 `src/data/personal-projects.ts` 维护。
+
+包含 Unity 多人射击游戏与自研 C++ 游戏引擎两个项目。卡片链接到本站详情，不将资料仓库当作这些项目的源码地址。八张截图保存于 `public/images/personal-projects/proj_fps/` 与 `proj_engine/`，对应原仓库 `public/images/` 下同名文件。数据与截图随本站静态发布，访客无需请求原站服务。原仓库不作修改，全屏入口仍展示 GitHub 置顶开源项目。
 
 ## 全屏入口与项目素材
 

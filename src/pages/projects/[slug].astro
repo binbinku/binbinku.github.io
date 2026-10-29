@@ -1,0 +1,27 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { projects } from '../../data/site';
+import { href } from '../../data/paths';
+export async function getStaticPaths() {
+  const readmes = await getCollection('projectReadmes');
+  return projects.map(project => {
+    const readme = readmes.find(entry => entry.data.projectId === project.id);
+    if (!readme) throw new Error(`Missing README snapshot for ${project.name}; run npm run sync:readmes`);
+    return { params: { slug: project.id }, props: { project, readme } };
+  });
+}
+const { project, readme } = Astro.props;
+const { Content, headings } = await render(readme);
+const toc = headings.filter(heading => heading.depth === 2 || heading.depth === 3);
+---
+<Base title={project.name} description={project.description} active="projects">
+  <div class="reading-masthead"><div class="container">
+    <a class="back-link" href={href('projects/')}>← 全部开源项目</a>
+    <header class="article-heading"><p class="eyebrow">OPEN SOURCE / README</p><h1>{project.name}</h1><p>{project.description}</p><div class="project-detail-actions"><a class="button button-primary" href={project.url} target="_blank" rel="noopener noreferrer">查看源码 <span>↗</span></a><a class="section-link" href={readme.data.sourceUrl} target="_blank" rel="noopener noreferrer">原始 README <span>↗</span></a><span class="readme-date">资料同步于 {readme.data.syncedAt}</span></div></header>
+  </div></div>
+  <div class="container article-container"><div class:list={['article-grid', { 'readme-without-toc': !toc.length }]}>
+    <article class="prose project-readme"><Content /></article>
+    {toc.length > 0 && <aside class="article-sidebar"><details class="toc sidebar-card" open><summary>README 目录 <span class="mono">CONTENTS</span></summary><nav aria-label="README 目录"><ol>{toc.map(heading => <li class:list={[{ nested: heading.depth === 3 }]}><a href={`#${heading.slug}`}>{heading.text}</a></li>)}</ol></nav></details></aside>}
+  </div></div>
+</Base>

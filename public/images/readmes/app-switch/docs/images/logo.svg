@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="256" height="256" role="img" aria-label="BKAppSwitch">
+  <defs>
+    <linearGradient id="bg" x1="0.25" y1="0.07" x2="0.75" y2="0.93">
+      <stop offset="0" stop-color="#1A3340"/>
+      <stop offset="1" stop-color="#09141F"/>
+    </linearGradient>
+  </defs>
+  <rect x="66" y="66" width="892" height="892" rx="202" fill="url(#bg)" stroke="#FFFFFF" stroke-opacity="0.13" stroke-width="3"/>
+  <rect x="260" y="324" width="490" height="330" rx="45" fill="#3D8A8C"/>
+  <rect x="205" y="404" width="490" height="330" rx="45" fill="#4DDBBD"/>
+  <path d="M337 569H553M483 499L553 569L483 639" fill="none" stroke="#0A2B33" stroke-width="29" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
