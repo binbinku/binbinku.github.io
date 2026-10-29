@@ -5,7 +5,7 @@ import ProjectVisual from '../components/ProjectVisual.astro';
 import { projects, profile, getProjectImages } from '../data/site';
 import { href } from '../data/paths';
 ---
-<Base immersive title="开源作品" description={profile.description}>
+<Base immersive rain title="开源作品" description={profile.description}>
   <section class="showcase" data-showcase role="region" aria-roledescription="carousel" aria-label="GitHub 置顶项目展示" aria-describedby="showcase-help">
     <div class="showcase-stage">
       {projects.map((project, index) => <article class="showcase-slide" data-slide data-name={project.name} hidden={index !== 0} aria-hidden={index !== 0 ? 'true' : 'false'} role="group" aria-roledescription="slide" aria-label={`${index + 1} / ${projects.length}：${project.name}`}>

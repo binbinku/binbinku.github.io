@@ -1,5 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
+import '../../styles/ambient.css';
 import ProjectCard from '../../components/ProjectCard.astro';
 import PersonalProjectCard from '../../components/PersonalProjectCard.astro';
 import { personalProjects } from '../../data/personal-projects';
@@ -9,7 +10,7 @@ import { href, postHref, formatDate } from '../../data/paths';
 import { getPosts } from '../../data/posts';
 const posts = await getPosts();
 ---
-<Base title="主页" active="home">
+<Base title="主页" active="home" ambient>
   <div class="container hub-page">
     <aside class="hub-profile" aria-labelledby="profile-name">
       <p class="eyebrow">THE BUILDER</p>

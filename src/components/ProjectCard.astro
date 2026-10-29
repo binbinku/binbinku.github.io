@@ -1,5 +1,6 @@
 ---
 import AiUsageBadge from './AiUsageBadge.astro';
+import ProjectCoverCue from './ProjectCoverCue.astro';
 import type { Project } from '../data/site';
 import ProjectVisual from './ProjectVisual.astro';
 import { href } from '../data/paths';
@@ -7,6 +8,6 @@ interface Props { project: Project; index: number }
 const { project, index } = Astro.props;
 ---
 <a class="project-card" href={href(`projects/${project.id}/`)}>
-  <div class="project-cover"><ProjectVisual project={project}/><span class="project-open" aria-hidden="true">↗</span></div>
+  <div class="project-cover"><ProjectVisual project={project}/><ProjectCoverCue/></div>
   <div class="project-body"><div class="project-category"><span>{project.category}</span><span class="mono">{String(index + 1).padStart(2, '0')}</span></div><h3>{project.name}</h3><div class="project-ai-usage"><AiUsageBadge projectId={project.id}/></div><p>{project.description}</p><div class="project-bottom"><span class="language-dot"></span>{project.language}<span class="project-source">查看详情 ↗</span></div></div>
 </a>

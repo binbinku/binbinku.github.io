@@ -40,6 +40,9 @@ h1, h2, h3, p { margin: 0; }
 /* A cinematic, viewport-sized front door. Project previews are real repository assets. */
 .immersive { background: #080808; color: #ededed; }
 .immersive main { min-height: 100svh; }
+.rain-entrance { position: relative; isolation: isolate; background: #0a0a0a; }
+.rain-entrance > main { position: relative; z-index: 1; }
+.rain-entrance .showcase { background: transparent; }
 .showcase { position: relative; isolation: isolate; display: grid; grid-template-rows: minmax(0,1fr); height: 100svh; min-height: 600px; padding: 0 48px; overflow: hidden; background: #080808; }
 .showcase-stage { position: relative; display: flex; align-items: center; min-height: 0; }
 .stage-hitbox { position: absolute; inset: 0; z-index: 2; outline-offset: -3px; }
@@ -160,7 +163,19 @@ h1, h2, h3, p { margin: 0; }
 .project-card { display: flex; flex-direction: column; min-width: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; transition: border-color .18s, box-shadow .18s; }
 .project-card:hover { border-color: var(--strong-line); box-shadow: 0 3px 10px #00000006; }
 .project-cover { position: relative; overflow: hidden; height: 185px; background: #111; }
-.project-open { position: absolute; right: 12px; top: 12px; display: flex; justify-content: center; align-items: center; width: 24px; height: 24px; border: 1px solid #ffffff30; border-radius: 4px; color: #ddd; background: #111c; font-size: 14px; }
+.project-cover::after { content: ''; position: absolute; inset: 0; z-index: 1; background: rgb(0 0 0 / 58%); opacity: 0; pointer-events: none; transition: opacity .22s ease; }
+.project-open { position: absolute; inset: 0; z-index: 2; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 10px; color: #fff; opacity: 0; transform: translateY(8px); pointer-events: none; transition: opacity .22s ease, transform .22s ease; }
+.project-open-icon { display: grid; place-items: center; width: 56px; height: 56px; border: 1px solid rgb(255 255 255 / 48%); border-radius: 50%; background: rgb(255 255 255 / 8%); }
+.project-open-label { font-size: 11px; letter-spacing: 1px; }
+.project-card:is(:hover, :focus-visible) .project-cover::after { opacity: 1; }
+.project-card:is(:hover, :focus-visible) .project-open { opacity: 1; transform: translateY(0); }
+@media (hover: none) {
+  .project-open { inset: 12px 12px auto auto; opacity: 1; transform: none; }
+  .project-open-icon { width: 30px; height: 30px; border-radius: 6px; background: rgb(0 0 0 / 65%); }
+  .project-open-icon svg { width: 17px; height: 17px; }
+  .project-open-label { display: none; }
+  .project-card:hover:not(:focus-visible) .project-cover::after { opacity: 0; }
+}
 .project-visual { position: relative; width: 100%; height: 100%; background: #111; overflow: hidden; }
 .project-visual img { display: block; width: 100%; height: 100%; object-fit: contain; }
 .project-cover .visual-device-monitor img { object-fit: cover; object-position: top; }

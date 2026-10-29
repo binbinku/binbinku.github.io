@@ -1,0 +1,115 @@
+<div class="code-backdrop" aria-hidden="true" inert>
+  <canvas class="binary-rain" data-binary-rain></canvas>
+</div>
+<script>
+  const canvas = document.querySelector<HTMLCanvasElement>('[data-binary-rain]');
+  const context = canvas?.getContext('2d');
+  if (canvas && context) {
+    const surface = canvas;
+    const ink = context;
+    const background = document.createElement('canvas');
+    const backgroundInk = background.getContext('2d');
+    const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+    const columnWidth = 28;
+    const rowHeight = 21;
+    const speedMultiplier = 3;
+    let width = 0;
+    let height = 0;
+    let dark = true;
+    let bits: string[][] = [];
+    let drops: { column: number; y: number; speed: number; length: number }[] = [];
+    let frame: number | undefined;
+    let lastTime = 0;
+    let lastPaint = 0;
+
+    function render(moving = true) {
+      ink.clearRect(0, 0, width, height);
+      ink.drawImage(background, 0, 0, background.width, background.height, 0, 0, width, height);
+      if (!moving) return;
+      const rgb = dark ? '255,255,255' : '0,0,0';
+      ink.font = '11px ui-monospace, SFMono-Regular, Consolas, monospace';
+      ink.textAlign = 'center';
+      for (const drop of drops) {
+        const headRow = Math.floor(drop.y / rowHeight);
+        const phase = drop.y / rowHeight - headRow;
+        for (let offset = drop.length; offset >= 0; offset--) {
+          const row = headRow - offset;
+          if (row < 0 || row >= bits[drop.column].length) continue;
+          const tail = Math.max(0, 1 - (offset + phase) / drop.length);
+          const alpha = offset === 0 ? .46 + .12 * (1 - phase) : .014 + .27 * tail * tail;
+          ink.fillStyle = `rgba(${rgb},${dark ? alpha : alpha * .7})`;
+          ink.shadowBlur = offset === 0 ? 3 : 0;
+          ink.shadowColor = `rgba(${rgb},.12)`;
+          ink.fillText(bits[drop.column][row], (drop.column + .5) * columnWidth, row * rowHeight + 14);
+        }
+      }
+      ink.shadowBlur = 0;
+    }
+
+    function resize() {
+      width = surface.clientWidth;
+      height = surface.clientHeight;
+      const ratio = Math.min(devicePixelRatio || 1, 1.5, Math.sqrt(3_000_000 / Math.max(1, width * height)));
+      surface.width = background.width = Math.round(width * ratio);
+      surface.height = background.height = Math.round(height * ratio);
+      ink.setTransform(ratio, 0, 0, ratio, 0, 0);
+      backgroundInk?.setTransform(ratio, 0, 0, ratio, 0, 0);
+      dark = document.documentElement.dataset.theme !== 'light';
+      const columns = Math.ceil(width / columnWidth);
+      const rows = Math.ceil(height / rowHeight) + 1;
+      bits = Array.from({ length: columns }, () => Array.from({ length: rows }, () => Math.random() > .5 ? '1' : '0'));
+      drops = Array.from({ length: columns }, (_, column) => ({
+        column,
+        y: Math.random() * (height + 280) - 280,
+        speed: (35 + Math.random() * 38) * speedMultiplier,
+        length: 10 + Math.floor(Math.random() * 10),
+      })).filter(() => Math.random() > .3);
+      if (backgroundInk) {
+        backgroundInk.clearRect(0, 0, width, height);
+        backgroundInk.font = '11px ui-monospace, SFMono-Regular, Consolas, monospace';
+        backgroundInk.textAlign = 'center';
+        backgroundInk.fillStyle = dark ? 'rgba(255,255,255,.014)' : 'rgba(0,0,0,.025)';
+        bits.forEach((column, x) => column.forEach((bit, y) => {
+          backgroundInk.fillText(bit, (x + .5) * columnWidth, y * rowHeight + 14);
+        }));
+      }
+      render(!reducedMotion.matches);
+    }
+
+    function tick(time: number) {
+      if (time - lastPaint >= 1000 / 30) {
+        const delta = lastTime ? Math.min((time - lastTime) / 1000, .1) : 0;
+        lastTime = lastPaint = time;
+        for (const drop of drops) {
+          drop.y += drop.speed * delta;
+          if (drop.y - drop.length * rowHeight > height) drop.y = -Math.random() * height * .4;
+        }
+        render();
+      }
+      frame = requestAnimationFrame(tick);
+    }
+
+    function updatePlayback() {
+      if (frame !== undefined) cancelAnimationFrame(frame);
+      lastTime = lastPaint = 0;
+      surface.dataset.rainState = document.hidden ? 'hidden' : reducedMotion.matches ? 'reduced' : 'running';
+      if (document.hidden) return;
+      render(!reducedMotion.matches);
+      if (!reducedMotion.matches) frame = requestAnimationFrame(tick);
+    }
+    resize();
+    updatePlayback();
+    new ResizeObserver(resize).observe(surface);
+    new MutationObserver(resize).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+    reducedMotion.addEventListener('change', updatePlayback);
+    document.addEventListener('visibilitychange', updatePlayback);
+    window.addEventListener('pagehide', () => { if (frame !== undefined) cancelAnimationFrame(frame); });
+    window.addEventListener('pageshow', updatePlayback);
+  }
+</script>
+
+<style>
+  .code-backdrop { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; user-select: none; contain: strict; mask-image: linear-gradient(180deg, transparent, #000 3%, #000 88%, transparent); }
+  .binary-rain { display: block; width: 100%; height: 100%; }
+  @media print { .code-backdrop { display: none; } }
+</style>

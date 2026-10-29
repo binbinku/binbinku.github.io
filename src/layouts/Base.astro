@@ -3,8 +3,9 @@ import '../styles/global.css';
 import { profile } from '../data/site';
 import { href } from '../data/paths';
 import Icon from '../components/Icon.astro';
-interface Props { title?: string; description?: string; active?: string; noindex?: boolean; immersive?: boolean }
-const { title, description = profile.description, active = '', noindex = false, immersive = false } = Astro.props;
+import CodeBackdrop from '../components/CodeBackdrop.astro';
+interface Props { title?: string; description?: string; active?: string; noindex?: boolean; immersive?: boolean; ambient?: boolean; rain?: boolean }
+const { title, description = profile.description, active = '', noindex = false, immersive = false, ambient = false, rain = false } = Astro.props;
 const navigation = [
   { label: '主页', path: 'blog/', key: 'home' },
   { label: '项目', path: 'projects/', key: 'projects' },
@@ -38,8 +39,9 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
       } catch {}
     </script>
   </head>
-  <body class:list={[{ immersive }]}>
+  <body class:list={[{ immersive, 'ambient-home': ambient, 'rain-entrance': rain }]}>
     <a class="skip-link" href="#main">跳到主要内容</a>
+    {(ambient || rain) && <CodeBackdrop/>}
     {!immersive && <header class="header">
       <div class="container header-inner">
         <a class="brand" href={href('blog/')} aria-label="BK 主页">

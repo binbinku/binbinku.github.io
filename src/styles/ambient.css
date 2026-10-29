@@ -1,0 +1,78 @@
+/* The portfolio home floats above a quiet monochrome binary rain. */
+.ambient-home {
+  --glass-fill: rgb(255 255 255 / 46%);
+  --glass-fallback: rgb(250 250 250 / 96%);
+  --glass-blur: 3px;
+  --glass-rim: rgb(0 0 0 / 10%);
+  --glass-sheen: rgb(255 255 255 / 85%);
+  --glass-shadow: 0 18px 54px rgb(0 0 0 / 8%), 0 3px 12px rgb(0 0 0 / 4%);
+  --glass-project: rgb(255 255 255 / 90%);
+  position: relative;
+  isolation: isolate;
+}
+:root[data-theme='dark'] .ambient-home {
+  --glass-fill: rgb(17 17 17 / 30%);
+  --glass-fallback: rgb(17 17 17 / 96%);
+  --glass-rim: rgb(255 255 255 / 10%);
+  --glass-sheen: rgb(255 255 255 / 5%);
+  --glass-shadow: 0 20px 65px rgb(0 0 0 / 30%), 0 4px 16px rgb(0 0 0 / 16%);
+  --glass-project: rgb(10 10 10 / 93%);
+  background: #0a0a0a;
+}
+.ambient-home > main, .ambient-home > .footer { position: relative; z-index: 1; }
+.ambient-home .header, .ambient-home .hub-profile, .ambient-home .hub-articles {
+  border: 1px solid var(--glass-rim);
+  border-radius: 20px;
+  background: var(--glass-fallback);
+  box-shadow: var(--glass-shadow), inset 0 1px 0 var(--glass-sheen);
+}
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .ambient-home .header, .ambient-home .hub-profile, .ambient-home .hub-articles {
+    background: var(--glass-fill);
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    backdrop-filter: blur(var(--glass-blur));
+  }
+}
+.ambient-home .header { --glass-blur: 5px; top: 18px; width: min(1320px, calc(100% - 80px)); margin: 18px auto 0; border-radius: 18px; }
+.ambient-home .header-inner { width: 100%; min-height: 66px; margin: 0; padding-inline: 23px; gap: 28px; }
+.ambient-home .navigation { gap: 4px; }
+.ambient-home .navigation a { min-height: 34px; padding: 5px 12px; border-radius: 8px; }
+.ambient-home .navigation a.active { background: rgb(128 128 128 / 10%); }
+.ambient-home .navigation a.active::after { display: none; }
+.ambient-home .hub-page { padding-top: 38px; }
+.ambient-home .hub-main { position: relative; z-index: 1; padding-top: 18px; }
+.ambient-home .hub-profile, .ambient-home .hub-articles { top: 110px; max-height: calc(100svh - 140px); padding: 23px 20px 25px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--glass-rim) transparent; }
+.ambient-home .hub-profile > .eyebrow { font-size: 8px; }
+.ambient-home .hub-avatar { width: 72px; height: 72px; margin-block: 23px 18px; }
+.ambient-home .hub-profile h1 { font-size: 28px; }
+.ambient-home .hub-role { gap: 6px; font-size: 10px; }
+.ambient-home .hub-github { background: rgb(128 128 128 / 4%); border-color: var(--glass-rim); }
+.ambient-home .hub-github:hover { background: rgb(128 128 128 / 10%); }
+.ambient-home .hub-articles .hub-heading .eyebrow { font-size: 7px; }
+.ambient-home .hub-articles .hub-heading h2 { font-size: 20px; }
+.ambient-home .project-card { border-radius: 14px; border-color: var(--glass-rim); background: var(--glass-project); }
+.ambient-home .project-card:hover { border-color: var(--strong-line); box-shadow: 0 12px 35px rgb(0 0 0 / 10%); }
+.ambient-home .footer { background: transparent; }
+@media (max-width: 1200px) {
+  .ambient-home .header { width: calc(100% - 48px); }
+  .ambient-home .header-inner { padding-inline: 20px; gap: 20px; }
+  .ambient-home .hub-profile, .ambient-home .hub-articles { padding-inline: 17px; }
+}
+@media (max-width: 1000px) {
+  .ambient-home .hub-articles { max-height: none; }
+}
+@media (max-width: 700px) {
+  .ambient-home .header { --glass-blur: 5px; top: 12px; width: calc(100% - 32px); margin-top: 12px; border-radius: 16px; }
+  .ambient-home .header-inner { padding-inline: 16px; min-height: 60px; gap: 0; }
+  .ambient-home .hub-page { width: calc(100% - 32px); padding-top: 24px; gap: 32px; }
+  .ambient-home .hub-main { padding-top: 0; }
+  .ambient-home .hub-profile, .ambient-home .hub-articles { max-height: none; padding: 22px; border-radius: 18px; }
+  .ambient-home .hub-profile { grid-template-columns: 62px minmax(0, 1fr); column-gap: 17px; }
+  .ambient-home .hub-avatar { width: 62px; height: 62px; margin: 0; }
+  .ambient-home .hub-profile h1 { font-size: 25px; }
+  .ambient-home .navigation { padding-top: 7px; }
+}
+@media print {
+  .code-backdrop { display: none; }
+  .ambient-home .header, .ambient-home .hub-profile, .ambient-home .hub-articles { box-shadow: none; backdrop-filter: none; }
+}
