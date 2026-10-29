@@ -1,7 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import ProjectVisual from '../components/ProjectVisual.astro';
-import { projects, profile } from '../data/site';
+import { projects, profile, getProjectImages } from '../data/site';
 import { href } from '../data/paths';
 ---
 <Base immersive title="开源作品" description={profile.description}>
@@ -9,11 +9,11 @@ import { href } from '../data/paths';
     <div class="showcase-stage">
       {projects.map((project, index) => <article class="showcase-slide" data-slide data-name={project.name} hidden={index !== 0} aria-hidden={index !== 0 ? 'true' : 'false'} role="group" aria-roledescription="slide" aria-label={`${index + 1} / ${projects.length}：${project.name}`}>
         <div class="showcase-copy"><p class="slide-eyebrow"><span>{String(index + 1).padStart(2, '0')}</span> / {project.category}</p><p class="slide-repository">{project.name}</p><h1>{project.titleLines.map(line => <span>{line}</span>)}</h1><p class="slide-tagline">{project.tagline}</p><p class="slide-description">{project.description}</p><div class="slide-stack">{project.stack.map(item => <span>{item}</span>)}</div><span class="showcase-enter">进入我的空间 <span>↗</span></span></div>
-        <div class="showcase-media"><div class="media-topline"><span>{project.image ? 'FROM THE REPOSITORY' : 'PROJECT ILLUSTRATION'}</span><span>{project.language}</span></div><ProjectVisual project={project} gallery eager/><p class="media-caption">{project.image ? '项目仓库中的公开素材' : '图形开发项目 · 几何示意'}<span>点击进入主页 ↗</span></p></div>
+        <div class="showcase-media"><div class="media-topline"><span>{project.image ? 'FROM THE REPOSITORY' : 'PROJECT ILLUSTRATION'}</span><span>{project.language}</span></div><ProjectVisual project={project} gallery eager/><div class="image-dots" role="group" aria-label={`${project.name} 图片选择`}>{Array.from({ length: Math.max(1, getProjectImages(project).length) }, (_, imageIndex) => <button type="button" data-image-select={imageIndex} aria-label={`查看 ${project.name} 第 ${imageIndex + 1} 张图片`} aria-pressed={imageIndex === 0 ? 'true' : 'false'}></button>)}</div><p class="media-caption">{project.image ? '项目仓库中的公开素材' : '图形开发项目 · 几何示意'}<span>点击进入主页 ↗</span></p></div>
       </article>)}
       <a class="stage-hitbox" href={href('blog/')} aria-label="进入 BK 的主页，了解全部项目和作者"></a>
     </div>
-    <p class="sr-only" id="showcase-help">每个项目最多展示三张图片，全部播完再切换项目。左右方向键切换图片，空格键暂停或继续，回车进入主页。</p>
+    <p class="sr-only" id="showcase-help">每个项目最多展示三张图片，全部播完再切换项目。点击图片下方圆点可选择图片。左右方向键切换图片，空格键暂停或继续，回车进入主页。</p>
     <button class="sr-only showcase-pause" data-play aria-label="暂停自动轮播" aria-pressed="false">暂停自动轮播</button>
     <p class="sr-only" data-announcement aria-live="polite" aria-atomic="true"></p>
     <noscript><p class="showcase-noscript">浏览全部项目，请<a href={href('blog/')}>进入主页 →</a></p></noscript>
@@ -24,6 +24,7 @@ import { href } from '../data/paths';
     if (root) {
       const slides = [...root.querySelectorAll<HTMLElement>('[data-slide]')];
       const images = slides.map(slide => [...slide.querySelectorAll<HTMLElement>('[data-image-frame]')]);
+      const dots = slides.map(slide => [...slide.querySelectorAll<HTMLButtonElement>('[data-image-select]')]);
       const frames = createShowcaseFrames(images.map(items => items.length));
       const play = root.querySelector<HTMLButtonElement>('[data-play]');
       const announcement = root.querySelector('[data-announcement]');
@@ -46,6 +47,7 @@ import { href } from '../data/paths';
             image.hidden = index !== (position === projectIndex ? imageIndex : 0);
             image.setAttribute('aria-hidden', String(image.hidden));
           });
+          dots[position].forEach((dot, index) => dot.setAttribute('aria-pressed', String(position === projectIndex && index === imageIndex)));
         });
         if (announce && announcement) announcement.textContent = `正在展示 ${slides[projectIndex].dataset.name}，第 ${projectIndex + 1} 个项目，第 ${imageIndex + 1} 张，共 ${images[projectIndex].length} 张图片`;
       }
@@ -66,6 +68,12 @@ import { href } from '../data/paths';
         }
         if (!paused && !document.hidden && frames.length > 1) frame = requestAnimationFrame(tick);
       }
+      dots.forEach((projectDots, projectIndex) => projectDots.forEach((dot, imageIndex) => {
+        dot.addEventListener('click', () => {
+          const next = frames.findIndex(frame => frame.projectIndex === projectIndex && frame.imageIndex === imageIndex);
+          if (next !== -1) show(next, true);
+        });
+      }));
       play?.addEventListener('click', () => { paused = !paused; updatePlayback(); });
       root.addEventListener('focusin', event => {
         if (!(event.target instanceof Element) || event.target.closest('[data-play]')) return;
@@ -83,6 +91,10 @@ import { href } from '../data/paths';
           paused = true;
           updatePlayback();
           show(frameIndex + (event.key === 'ArrowRight' ? 1 : -1), true);
+          if (event.target instanceof Element && event.target.closest('[data-image-select]')) {
+            const current = frames[frameIndex];
+            dots[current.projectIndex][current.imageIndex]?.focus();
+          }
         }
       });
       document.addEventListener('visibilitychange', updatePlayback);

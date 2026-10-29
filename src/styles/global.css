@@ -43,7 +43,7 @@ h1, h2, h3, p { margin: 0; }
 .showcase { position: relative; isolation: isolate; display: grid; grid-template-rows: minmax(0,1fr); height: 100svh; min-height: 600px; padding: 0 48px; overflow: hidden; background: #080808; }
 .showcase-stage { position: relative; display: flex; align-items: center; min-height: 0; }
 .stage-hitbox { position: absolute; inset: 0; z-index: 2; outline-offset: -3px; }
-.showcase-slide { display: grid; grid-template-columns: .82fr 1.18fr; align-items: center; gap: 60px; width: min(1440px,100%); margin-inline: auto; padding-block: 30px; animation: slide-in .7s ease both; }
+.showcase-slide { position: relative; z-index: 3; pointer-events: none; display: grid; grid-template-columns: .82fr 1.18fr; align-items: center; gap: 60px; width: min(1440px,100%); margin-inline: auto; padding-block: 30px; animation: slide-in .7s ease both; }
 .showcase-copy { min-width: 0; }
 .slide-eyebrow { color: #8c8c8c; font: 10px var(--mono); letter-spacing: 1.3px; margin-bottom: 30px; }
 .slide-eyebrow > span { color: #eee; margin-right: 7px; }
@@ -58,7 +58,15 @@ h1, h2, h3, p { margin: 0; }
 .showcase-enter { display: inline-flex; align-items: center; gap: 45px; padding-bottom: 8px; margin-top: 39px; font-size: 13px; color: #ddd; }
 .showcase-enter > span { font-size: 19px; transition: transform .2s; }
 .showcase-stage:hover .showcase-enter > span { transform: translate(3px,-3px); }
-.showcase-media { min-width: 0; position: relative; transform: perspective(1400px) rotateY(-7deg) rotateX(2deg); transform-origin: center; }
+.showcase-media { z-index: 3; pointer-events: none; min-width: 0; position: relative; transform: perspective(1400px) rotateY(-7deg) rotateX(2deg); transform-origin: center; }
+.image-dots { display: none; justify-content: center; gap: 2px; margin-top: 8px; pointer-events: auto; }
+.js .image-dots { display: flex; }
+.image-dots button { display: grid; place-items: center; width: 32px; height: 32px; padding: 0; border: 0; border-radius: 50%; background: transparent; }
+.image-dots button::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: #555; transition: background .2s, transform .2s; }
+.image-dots button[aria-pressed='true']::before { background: #ededed; transform: scale(1.25); }
+.image-dots button:hover::before { background: #aaa; }
+.image-dots button[aria-pressed='true']:hover::before { background: #fff; }
+.image-dots button:focus-visible { outline-offset: -2px; }
 .media-topline, .media-caption { display: flex; align-items: center; justify-content: space-between; gap: 15px; color: #666; font: 7px var(--mono); letter-spacing: 1px; }
 .media-topline { padding-bottom: 13px; }
 .media-topline > span:last-child { color: #888; }
