@@ -1,12 +1,19 @@
 ---
 import Base from '../../layouts/Base.astro';
 import PostList from '../../components/PostList.astro';
+import TopicBar from '../../components/TopicBar.astro';
+import BlogSidebar from '../../components/BlogSidebar.astro';
 import { getPosts } from '../../data/posts';
 import { href } from '../../data/paths';
 export async function getStaticPaths() {
-  const posts = await getPosts();
-  return [...new Set(posts.flatMap(post => post.data.tags))].map(tag => ({ params: { tag }, props: { tag, posts: posts.filter(post => post.data.tags.includes(tag)) } }));
+  const allPosts = await getPosts();
+  return [...new Set(allPosts.flatMap(post => post.data.tags))].map(tag => ({ params: { tag }, props: { tag, allPosts, posts: allPosts.filter(post => post.data.tags.includes(tag)) } }));
 }
-const { tag, posts } = Astro.props;
+const { tag, posts, allPosts } = Astro.props;
 ---
-<Base title={`标签：${tag}`} active="blog"><div class="container page-content"><header class="page-heading"><a class="back-link" href={href('blog/')}>← 所有文章</a><p class="eyebrow">TOPIC / {posts.length} 篇文章</p><h1># <span class="accent">{tag}</span></h1></header><PostList posts={posts}/></div></Base>
+<Base title={`标签：${tag}`} active="blog">
+  <div class="container page-content">
+    <header class="page-heading"><a class="back-link" href={href('blog/')}>← 所有文章</a><p class="eyebrow">TOPIC / {posts.length} 篇文章</p><h1><span class="heading-hash">#</span> {tag}</h1><p>与「{tag}」有关的笔记，都在这里。</p></header>
+    <div class="content-layout"><div class="main-feed"><TopicBar posts={allPosts} active={tag}/><PostList posts={posts} headingLevel="h2"/></div><aside class="content-sidebar" aria-label="作者与话题"><BlogSidebar/></aside></div>
+  </div>
+</Base>

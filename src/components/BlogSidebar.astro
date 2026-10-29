@@ -1,0 +1,23 @@
+---
+import { profile, projects } from '../data/site';
+import { getPosts } from '../data/posts';
+import { href, tagHref } from '../data/paths';
+import Icon from './Icon.astro';
+interface Props { compact?: boolean; showTopics?: boolean }
+const { compact = false, showTopics = true } = Astro.props;
+const posts = await getPosts();
+const tags = [...new Set(posts.flatMap(post => post.data.tags))].sort();
+---
+<div class:list={['blog-sidebar', { 'sidebar-compact': compact }]}>
+  <section class="author-card" aria-label="关于作者">
+    <div class="author-card-top"><span class="eyebrow">THE PERSON BEHIND THE WORDS</span><span class="author-mark">↗</span></div>
+    <a class="author-avatar" href={href('about/')}><img src={profile.avatar} width="76" height="76" loading="lazy" alt="BK 的 GitHub 头像" /></a>
+    <h2>{profile.name}</h2><a class="author-handle" href={profile.github} target="_blank" rel="noopener noreferrer">@{profile.handle}</a>
+    <p>写一点代码，记一些想法。<br />保持好奇，持续构建。</p>
+    <div class="author-stats"><div><strong>{posts.length}</strong><span>文章</span></div><div><strong>{projects.length}</strong><span>项目</span></div><div><strong>{tags.length}</strong><span>标签</span></div></div>
+    <a class="button button-primary author-github" href={profile.github} target="_blank" rel="noopener noreferrer"><Icon name="github" size={16}/> 在 GitHub 找到我 <span>↗</span></a>
+  </section>
+  {showTopics && tags.length > 0 && <section class="sidebar-card"><div class="sidebar-heading"><h2>探索话题</h2><span class="mono">TOPICS</span></div><div class="sidebar-tags">{tags.map(tag => <a href={tagHref(tag)}><span># {tag}</span><span>{posts.filter(post => post.data.tags.includes(tag)).length}</span></a>)}</div></section>}
+  {!compact && <section class="sidebar-note"><span class="note-symbol">*</span><p>这里是一块慢慢生长的数字花园。<br />欢迎随时回来看看。</p><a href={href('about/')}>更多关于我 <span>↗</span></a></section>}
+  <slot />
+</div>

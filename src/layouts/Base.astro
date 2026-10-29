@@ -5,17 +5,22 @@ import { href } from '../data/paths';
 import Icon from '../components/Icon.astro';
 interface Props { title?: string; description?: string; active?: string; noindex?: boolean }
 const { title, description = profile.description, active = '', noindex = false } = Astro.props;
-const navigation = [{ label: '首页', path: '', key: 'home' }, { label: '博客', path: 'blog/', key: 'blog' }, { label: '项目', path: 'projects/', key: 'projects' }, { label: '关于', path: 'about/', key: 'about' }];
+const navigation = [
+  { label: '首页', path: '', key: 'home' },
+  { label: '博客', path: 'blog/', key: 'blog' },
+  { label: '项目', path: 'projects/', key: 'projects' },
+  { label: '关于', path: 'about/', key: 'about' },
+];
 const pageTitle = title ? `${title} · BK` : profile.title;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 ---
 <!doctype html>
-<html lang="zh-CN" data-theme="dark">
+<html lang="zh-CN" data-theme="light">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
-    <meta name="theme-color" content="#0c1014" />
+    <meta name="theme-color" content="#f7f7f4" />
     {noindex && <meta name="robots" content="noindex" />}
     <link rel="canonical" href={canonical} />
     <link rel="icon" type="image/svg+xml" href={href('favicon.svg')} />
@@ -26,34 +31,43 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <meta property="og:image" content={new URL(href('images/workspace.svg'), Astro.site)} />
     <title>{pageTitle}</title>
     <script is:inline>
-      try { document.documentElement.dataset.theme = localStorage.getItem('bk-theme') === 'light' ? 'light' : 'dark'; } catch {}
+      document.documentElement.classList.add('js');
+      try {
+        const theme = localStorage.getItem('bk-theme');
+        if (theme === 'dark' || theme === 'light') document.documentElement.dataset.theme = theme;
+      } catch {}
     </script>
   </head>
   <body>
     <a class="skip-link" href="#main">跳到主要内容</a>
     <header class="header">
       <div class="container header-inner">
-        <a class="brand" href={href()} aria-label="BK 首页"><span class="brand-mark">b<span>k</span><i>.</i></span><span class="brand-divider"></span><span class="brand-caption">PERSONAL SPACE</span></a>
+        <a class="brand" href={href()} aria-label="BK 首页">
+          <span class="brand-symbol">bk<span>_</span></span>
+          <span class="brand-text"><strong>BK’s Blog<span>.</span></strong><small>代码与思考</small></span>
+        </a>
         <nav id="navigation" class="navigation" aria-label="主导航">
           {navigation.map(item => <a href={href(item.path)} class:list={[{ active: active === item.key }]} aria-current={active === item.key ? 'page' : undefined}>{item.label}</a>)}
         </nav>
         <div class="header-actions">
-          <a class="icon-button github-button" href={profile.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub 个人主页（新窗口）"><Icon name="github" /></a>
+          <a class="header-github" href={profile.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub 个人主页（新窗口）"><Icon name="github" size={17}/><span>GitHub</span><span class="external-arrow">↗</span></a>
           <span class="action-divider"></span>
-          <button class="icon-button theme-toggle" aria-label="切换到浅色主题" title="切换主题"><span class="sun-icon"><Icon name="sun" /></span><span class="moon-icon"><Icon name="moon" /></span></button>
-          <button class="icon-button menu-toggle" aria-controls="navigation" aria-expanded="false" aria-label="打开导航"><Icon name="menu" /></button>
+          <button class="icon-button theme-toggle" aria-label="切换到深色主题" title="切换主题"><span class="sun-icon"><Icon name="sun" size={19}/></span><span class="moon-icon"><Icon name="moon" size={19}/></span></button>
+          <button class="icon-button menu-toggle" aria-controls="navigation" aria-expanded="false" aria-label="打开导航"><Icon name="menu"/></button>
         </div>
       </div>
     </header>
     <main id="main"><slot /></main>
     <footer class="footer container">
-      <div><a class="footer-brand" href={href()}>bk<span>.</span></a><span>保持好奇，持续构建。</span></div>
-      <div class="footer-right"><span>© {new Date().getFullYear()} BK</span><span class="footer-dot">/</span><a href="https://astro.build" target="_blank" rel="noopener noreferrer">Built with Astro ↗</a><a href={profile.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub（新窗口）"><Icon name="github" size={17} /></a></div>
+      <div class="footer-left"><a class="footer-brand" href={href()}>bk<span>_</span></a><span>记录，让想法有迹可循。</span></div>
+      <div class="footer-right"><span>© {new Date().getFullYear()} BK</span><span class="footer-dot">·</span><a href="https://astro.build" target="_blank" rel="noopener noreferrer">Built with Astro</a><a href={profile.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub（新窗口）"><Icon name="github" size={16}/></a></div>
     </footer>
     <script>
       const themeButton = document.querySelector<HTMLButtonElement>('.theme-toggle');
       function updateThemeLabel() {
-        themeButton?.setAttribute('aria-label', `切换到${document.documentElement.dataset.theme === 'dark' ? '浅' : '深'}色主题`);
+        const dark = document.documentElement.dataset.theme === 'dark';
+        themeButton?.setAttribute('aria-label', `切换到${dark ? '浅' : '深'}色主题`);
+        document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#181918' : '#f7f7f4');
       }
       updateThemeLabel();
       themeButton?.addEventListener('click', () => {
@@ -74,7 +88,9 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
         menu.setAttribute('aria-label', open ? '关闭导航' : '打开导航');
         document.querySelector('#navigation')?.classList.toggle('is-open', open);
       });
-      document.addEventListener('keydown', (event) => { if (event.key === 'Escape' && menu?.getAttribute('aria-expanded') === 'true') { closeMenu(); menu.focus(); } });
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && menu?.getAttribute('aria-expanded') === 'true') { closeMenu(); menu.focus(); }
+      });
       document.querySelectorAll('#navigation a').forEach(link => link.addEventListener('click', closeMenu));
     </script>
   </body>

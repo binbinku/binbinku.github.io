@@ -54,7 +54,8 @@ test('adding Markdown generates dated lists, encoded tag archives, adjacent link
       ['fixture-draft', '不可公开的草稿', '2024-01-03', true, '私密草稿标签'],
     ];
     for (const [slug, title, date, draft, tag] of articles) {
-      await writeFile(join(temporary, 'src/content/blog', `${slug}.md`), `---\ntitle: '${title}'\ndescription: '内容集合验收文章'\npubDate: ${date}\ntags: ['${tag}']\ndraft: ${draft}\n---\n\n## 测试章节\n\n正文。\n`);
+      const cover = slug === 'fixture-old' ? "cover: '../../assets/workspace.svg'\n" : '';
+      await writeFile(join(temporary, 'src/content/blog', `${slug}.md`), `---\ntitle: '${title}'\ndescription: '内容集合验收文章'\npubDate: ${date}\ntags: ['${tag}']\ndraft: ${draft}\n${cover}---\n\n## 测试章节\n\n正文。\n`);
     }
     const astro = await realpath(join(root, 'node_modules/.bin/astro'));
     execFileSync(process.execPath, [astro, 'build', '--root', temporary], { cwd: temporary, stdio: 'pipe', timeout: 120000, env: { ...process.env, ASTRO_TELEMETRY_DISABLED: '1' } });
@@ -62,6 +63,7 @@ test('adding Markdown generates dated lists, encoded tag archives, adjacent link
     const listing = await readFile(join(built, 'blog/index.html'), 'utf8');
     assert.ok(listing.indexOf('新文章验收') < listing.indexOf('旧文章验收'), 'newest first');
     assert.ok(!listing.includes('不可公开的草稿'));
+    assert.match(listing, /src="\/BKSite\/_astro\/workspace[^\"]+\.svg"/, 'custom cover is generated with the deployment base');
     const older = await readFile(join(built, 'blog/fixture-old/index.html'), 'utf8');
     const newer = await readFile(join(built, 'blog/fixture-new/index.html'), 'utf8');
     assert.match(older, /href="\/BKSite\/blog\/fixture-new\/"/);

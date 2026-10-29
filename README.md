@@ -38,13 +38,15 @@ draft: false
 
 图片推荐放入 `src/assets/`，在 Markdown 中使用相对路径，例如 `../../assets/workspace.svg`。Astro 会生成适配 `/BKSite/` 的图片地址。`public/` 中的文件需要在 Markdown 中手动使用 `/BKSite/images/文件名`。
 
+可在 frontmatter 中添加可选的 `cover: '../../assets/your-cover.jpg'`，为文章设置封面。图片由 Astro 处理并适配部署路径；未设置时使用本站自绘的中性几何封面。
+
 初始 `hello-world.md` 是明确标注的示例文章，可直接修改或删除。
 
 ## 修改资料和项目
 
 编辑 `src/data/site.ts`，更新昵称、介绍、头像地址和项目列表。初始内容来自 `binbinku` 的公开 GitHub 资料；项目采用静态快照，不在访客浏览时请求 GitHub API。头像使用 GitHub 头像 CDN。没有配置邮箱、简历或其他未提供的资料。
 
-配色和响应式样式位于 `src/styles/global.css`。网站默认深色，切换结果保存在浏览器本地。字体通过 Google Fonts 加载，网络不可用时使用系统字体。
+配色和响应式样式位于 `src/styles/global.css`。网站默认采用 Codex 风格的暖白与灰黑配色，保留深色主题；切换结果保存在浏览器本地。布局参考 Aurora 的精选文章、封面卡片与作者侧栏，在 Astro 中独立实现。字体通过 Google Fonts 加载，网络不可用时使用系统字体。
 
 ## 首次部署
 

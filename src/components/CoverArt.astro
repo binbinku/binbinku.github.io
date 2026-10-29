@@ -1,0 +1,14 @@
+---
+interface Props { variant?: 'notes' | 'code' | 'chat' | 'unity'; compact?: boolean }
+const { variant = 'notes', compact = false } = Astro.props;
+const labels = { notes: 'A PLACE FOR IDEAS', code: 'TOOLS FOR BUILDERS', chat: 'CONNECTED BY CODE', unity: 'FROM IDEA TO PROJECT' };
+---
+<div class:list={['cover-art', `cover-${variant}`, { 'cover-compact': compact }]} aria-hidden="true">
+  <span class="art-label">BK / {labels[variant]}</span>
+  <span class="art-orbit orbit-one"></span><span class="art-orbit orbit-two"></span><span class="art-orbit orbit-three"></span>
+  {variant === 'notes' && <div class="art-type">Hello,<br />world<span>_</span></div>}
+  {variant === 'code' && <div class="art-code"><span>{'{'}</span><i>_</i><span>{'}'}</span></div>}
+  {variant === 'chat' && <svg class="art-symbol" width="120" height="110" viewBox="0 0 120 110" fill="none"><rect x="7" y="8" width="83" height="62" rx="18" fill="currentColor"/><path d="m23 67-4 19 27-18" fill="currentColor"/><rect x="48" y="45" width="65" height="49" rx="15" fill="var(--art-bg)" stroke="currentColor" stroke-width="3"/><path d="m95 91 5 14-23-13" fill="var(--art-bg)" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/><path d="M24 34h49M65 66h30M65 76h20" stroke="var(--art-bg)" stroke-width="4" stroke-linecap="round"/></svg>}
+  {variant === 'unity' && <svg class="art-symbol" width="125" height="120" viewBox="0 0 125 120" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"><path d="m62 4 52 29v54l-52 29L10 87V33Z" fill="var(--art-bg)"/><path d="m10 33 52 30 52-30M62 63v53M36 18l52 30v53M88 18 36 48v53M10 60l52 30 52-30"/><path d="m62 4 26 14-52 30-26-15Z" fill="currentColor" opacity=".16"/></svg>}
+  <span class="art-footer"><span>BUILD. LEARN. ITERATE.</span><span>↗</span></span>
+</div>

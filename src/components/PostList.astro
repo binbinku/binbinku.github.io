@@ -1,13 +1,21 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import { Image } from 'astro:assets';
 import { formatDate, postHref, tagHref } from '../data/paths';
-interface Props { posts: CollectionEntry<'blog'>[] }
-const { posts } = Astro.props;
+import CoverArt from './CoverArt.astro';
+interface Props { posts: CollectionEntry<'blog'>[]; headingLevel?: 'h2' | 'h3' }
+const { posts, headingLevel: Heading = 'h3' } = Astro.props;
 ---
-<div class="post-list">
-  {posts.map((post, index) => <article class="post-row">
-    <span class="post-index">{String(index + 1).padStart(2, '0')}</span>
-    <div class="post-info"><div class="post-meta"><time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time><span>·</span>{post.data.tags.map(tag => <a class="text-tag" href={tagHref(tag)}>{tag}</a>)}</div><h3><a href={postHref(post.id)}>{post.data.title}</a></h3><p>{post.data.description}</p></div>
-    <a class="post-arrow" href={postHref(post.id)} aria-label={`阅读：${post.data.title}`}>↗</a>
+<div class="post-grid">
+  {posts.map(post => <article class="post-card">
+    <a class="post-cover" href={postHref(post.id)} aria-label={`阅读：${post.data.title}`}>
+      {post.data.cover ? <Image src={post.data.cover} alt="" loading="lazy"/> : <CoverArt compact/>}
+    </a>
+    <div class="post-card-body">
+      <div class="tag-list">{post.data.tags.map(tag => <a class="text-tag" href={tagHref(tag)}># {tag}</a>)}</div>
+      <Heading class="post-title"><a href={postHref(post.id)}>{post.data.title}</a></Heading>
+      <p>{post.data.description}</p>
+      <div class="post-card-footer"><div class="post-meta"><span class="author-initial">BK</span><span>BK</span><span class="meta-divider">/</span><time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time></div><a class="post-arrow" href={postHref(post.id)} aria-label={`打开文章：${post.data.title}`}>↗</a></div>
+    </div>
   </article>)}
 </div>
