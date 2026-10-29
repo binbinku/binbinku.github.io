@@ -1,0 +1,42 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import PostList from '../components/PostList.astro';
+import { profile, projects } from '../data/site';
+import { href } from '../data/paths';
+import { getPosts } from '../data/posts';
+const posts = await getPosts();
+---
+<Base active="home">
+  <section class="hero container">
+    <div class="hero-copy">
+      <p class="eyebrow"><span class="status-dot"></span> HELLO, WORLD <span class="eyebrow-slash">/</span> 这里是 BK 的个人空间</p>
+      <h1>让想法落地，<br />让<span class="accent">探索</span>继续<span class="hero-period">.</span></h1>
+      <p class="hero-intro">{profile.introduction}</p>
+      <div class="hero-buttons"><a class="button button-primary" href={href('blog/')}>阅读我的博客 <Icon name="arrow" size={17}/></a><a class="button button-secondary" href={profile.github} target="_blank" rel="noopener noreferrer"><Icon name="github" size={18}/> GitHub <span>↗</span></a></div>
+      <div class="hero-caption"><span class="tiny-cross">+</span><span>CODE. CREATE. DOCUMENT.</span><span class="caption-line"></span></div>
+    </div>
+    <div class="hero-visual" aria-label="个人简介代码卡片">
+      <div class="visual-coordinate">~/workspace/hello.ts</div>
+      <div class="code-window">
+        <div class="window-bar"><div class="window-dots"><i></i><i></i><i></i></div><span>developer.ts</span><span class="window-language">TS</span></div>
+        <div class="code-content"><div class="code-line"><span class="line-number">01</span><span><span class="code-comment">// a little bit about me</span></span></div><div class="code-line"><span class="line-number">02</span><span><span class="code-purple">const</span> <span class="code-blue">developer</span> = {'{'}</span></div><div class="code-line"><span class="line-number">03</span><span>  name: <span class="code-green">'BK'</span>,</span></div><div class="code-line"><span class="line-number">04</span><span>  github: <span class="code-green">'binbinku'</span>,</span></div><div class="code-line"><span class="line-number">05</span><span>  space: <span class="code-green">'代码与思考'</span>,</span></div><div class="code-line"><span class="line-number">06</span><span>  exploring: <span class="code-orange">true</span>,</span></div><div class="code-line"><span class="line-number">07</span><span>{'}'};</span></div><div class="code-line"><span class="line-number">08</span><span> </span></div><div class="code-line"><span class="line-number">09</span><span><span class="code-blue">build</span>(<span class="code-green">'something meaningful'</span>);</span></div></div>
+        <div class="terminal-output"><span>❯</span> hello, world<span class="terminal-cursor"></span><span class="terminal-check">✓</span></div>
+        <div class="window-status"><span><i></i> main*</span><span>UTF-8 <span>TypeScript</span></span></div>
+      </div>
+      <div class="floating-label"><span class="status-dot"></span> ALWAYS A WORK IN PROGRESS</div>
+      <span class="visual-cross cross-top">+</span><span class="visual-cross cross-bottom">+</span>
+    </div>
+  </section>
+  <div class="container"><div class="section-rule"><span>一点记录，一些作品，一直向前。</span><span class="mono">SCROLL TO EXPLORE ↓</span></div></div>
+  <section class="container section latest-section">
+    <div class="section-heading"><div><p class="eyebrow section-eyebrow">01 / WRITING</p><h2>最近在写<span>.</span></h2></div><a class="section-link" href={href('blog/')}>全部文章 <Icon name="arrow" size={17}/></a></div>
+    {posts.length ? <PostList posts={posts.slice(0, 3)} /> : <p class="empty-state">笔记正在路上，先去看看我的项目吧。</p>}
+  </section>
+  <section class="container section projects-section">
+    <div class="section-heading"><div><p class="eyebrow section-eyebrow">02 / BUILDING</p><h2>把想法做出来<span>.</span></h2><p class="section-description">从小工具到应用，把探索变成可以运行的东西。</p></div><a class="section-link" href={href('projects/')}>全部项目 <Icon name="arrow" size={17}/></a></div>
+    <div class="project-grid">{projects.map((project, index) => <ProjectCard project={project} index={index}/>)}</div>
+  </section>
+  <section class="container about-strip"><div class="about-strip-text"><span class="eyebrow">03 / CONNECT</span><h2>代码之外，也很高兴认识你。</h2><p>更多项目与更新，都在我的 GitHub。</p></div><a class="connect-link" href={profile.github} target="_blank" rel="noopener noreferrer"><span class="avatar-wrap"><img src={profile.avatar} width="48" height="48" loading="lazy" alt="BK 的 GitHub 头像" /></span><span><strong>@binbinku</strong><small>Find me on GitHub</small></span><span class="connect-arrow">↗</span></a></section>
+</Base>

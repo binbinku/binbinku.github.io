@@ -1,0 +1,5 @@
+---
+import Base from '../layouts/Base.astro';
+import { href } from '../data/paths';
+---
+<Base title="页面未找到" noindex><section class="container not-found"><p class="eyebrow">ERROR / PAGE NOT FOUND</p><span class="error-code">404<span>_</span></span><h1>这条路径，还没有写下故事。</h1><p>页面可能已移动，或者链接有一点小偏差。</p><a class="button button-primary" href={href()}>返回首页 →</a></section></Base>

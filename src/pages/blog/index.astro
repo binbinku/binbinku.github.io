@@ -1,0 +1,9 @@
+---
+import Base from '../../layouts/Base.astro';
+import PostList from '../../components/PostList.astro';
+import { getPosts } from '../../data/posts';
+import { tagHref } from '../../data/paths';
+const posts = await getPosts();
+const tags = [...new Set(posts.flatMap(post => post.data.tags))].sort();
+---
+<Base title="博客" active="blog"><div class="container page-content"><header class="page-heading"><p class="eyebrow"><span class="status-dot"></span> NOTES & THOUGHTS</p><h1>写下来，<span class="accent">才有迹可循。</span></h1><p>记录代码、工具，以及探索过程中的一些思考。</p></header><div class="blog-toolbar"><span class="mono">全部文章 <span class="count">{posts.length}</span></span><nav class="tag-list" aria-label="文章标签">{tags.map(tag => <a class="tag" href={tagHref(tag)}># {tag}</a>)}</nav></div>{posts.length ? <PostList posts={posts}/> : <p class="empty-state">还没有发布文章，敬请期待。</p>}</div></Base>

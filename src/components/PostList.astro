@@ -1,0 +1,13 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { formatDate, postHref, tagHref } from '../data/paths';
+interface Props { posts: CollectionEntry<'blog'>[] }
+const { posts } = Astro.props;
+---
+<div class="post-list">
+  {posts.map((post, index) => <article class="post-row">
+    <span class="post-index">{String(index + 1).padStart(2, '0')}</span>
+    <div class="post-info"><div class="post-meta"><time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time><span>·</span>{post.data.tags.map(tag => <a class="text-tag" href={tagHref(tag)}>{tag}</a>)}</div><h3><a href={postHref(post.id)}>{post.data.title}</a></h3><p>{post.data.description}</p></div>
+    <a class="post-arrow" href={postHref(post.id)} aria-label={`阅读：${post.data.title}`}>↗</a>
+  </article>)}
+</div>

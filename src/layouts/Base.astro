@@ -1,0 +1,81 @@
+---
+import '../styles/global.css';
+import { profile } from '../data/site';
+import { href } from '../data/paths';
+import Icon from '../components/Icon.astro';
+interface Props { title?: string; description?: string; active?: string; noindex?: boolean }
+const { title, description = profile.description, active = '', noindex = false } = Astro.props;
+const navigation = [{ label: '首页', path: '', key: 'home' }, { label: '博客', path: 'blog/', key: 'blog' }, { label: '项目', path: 'projects/', key: 'projects' }, { label: '关于', path: 'about/', key: 'about' }];
+const pageTitle = title ? `${title} · BK` : profile.title;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+---
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#0c1014" />
+    {noindex && <meta name="robots" content="noindex" />}
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/svg+xml" href={href('favicon.svg')} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={new URL(href('images/workspace.svg'), Astro.site)} />
+    <title>{pageTitle}</title>
+    <script is:inline>
+      try { document.documentElement.dataset.theme = localStorage.getItem('bk-theme') === 'light' ? 'light' : 'dark'; } catch {}
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">跳到主要内容</a>
+    <header class="header">
+      <div class="container header-inner">
+        <a class="brand" href={href()} aria-label="BK 首页"><span class="brand-mark">b<span>k</span><i>.</i></span><span class="brand-divider"></span><span class="brand-caption">PERSONAL SPACE</span></a>
+        <nav id="navigation" class="navigation" aria-label="主导航">
+          {navigation.map(item => <a href={href(item.path)} class:list={[{ active: active === item.key }]} aria-current={active === item.key ? 'page' : undefined}>{item.label}</a>)}
+        </nav>
+        <div class="header-actions">
+          <a class="icon-button github-button" href={profile.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub 个人主页（新窗口）"><Icon name="github" /></a>
+          <span class="action-divider"></span>
+          <button class="icon-button theme-toggle" aria-label="切换到浅色主题" title="切换主题"><span class="sun-icon"><Icon name="sun" /></span><span class="moon-icon"><Icon name="moon" /></span></button>
+          <button class="icon-button menu-toggle" aria-controls="navigation" aria-expanded="false" aria-label="打开导航"><Icon name="menu" /></button>
+        </div>
+      </div>
+    </header>
+    <main id="main"><slot /></main>
+    <footer class="footer container">
+      <div><a class="footer-brand" href={href()}>bk<span>.</span></a><span>保持好奇，持续构建。</span></div>
+      <div class="footer-right"><span>© {new Date().getFullYear()} BK</span><span class="footer-dot">/</span><a href="https://astro.build" target="_blank" rel="noopener noreferrer">Built with Astro ↗</a><a href={profile.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub（新窗口）"><Icon name="github" size={17} /></a></div>
+    </footer>
+    <script>
+      const themeButton = document.querySelector<HTMLButtonElement>('.theme-toggle');
+      function updateThemeLabel() {
+        themeButton?.setAttribute('aria-label', `切换到${document.documentElement.dataset.theme === 'dark' ? '浅' : '深'}色主题`);
+      }
+      updateThemeLabel();
+      themeButton?.addEventListener('click', () => {
+        const theme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+        document.documentElement.dataset.theme = theme;
+        try { localStorage.setItem('bk-theme', theme); } catch {}
+        updateThemeLabel();
+      });
+      const menu = document.querySelector<HTMLButtonElement>('.menu-toggle');
+      function closeMenu() {
+        menu?.setAttribute('aria-expanded', 'false');
+        menu?.setAttribute('aria-label', '打开导航');
+        document.querySelector('#navigation')?.classList.remove('is-open');
+      }
+      menu?.addEventListener('click', () => {
+        const open = menu.getAttribute('aria-expanded') !== 'true';
+        menu.setAttribute('aria-expanded', String(open));
+        menu.setAttribute('aria-label', open ? '关闭导航' : '打开导航');
+        document.querySelector('#navigation')?.classList.toggle('is-open', open);
+      });
+      document.addEventListener('keydown', (event) => { if (event.key === 'Escape' && menu?.getAttribute('aria-expanded') === 'true') { closeMenu(); menu.focus(); } });
+      document.querySelectorAll('#navigation a').forEach(link => link.addEventListener('click', closeMenu));
+    </script>
+  </body>
+</html>
