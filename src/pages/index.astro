@@ -5,8 +5,7 @@ import { projects, profile } from '../data/site';
 import { href } from '../data/paths';
 ---
 <Base immersive title="开源作品" description={profile.description}>
-  <section class="showcase" data-showcase role="region" aria-roledescription="carousel" aria-label="GitHub 置顶项目展示">
-    <header class="showcase-header"><a href={href('blog/')} class="showcase-brand" aria-label="进入 BK 的主页">bk<span>.</span></a><p>INDEPENDENT DEVELOPER <span>/</span> OPEN SOURCE</p><a class="showcase-home" href={href('blog/')}>进入主页 <span>↗</span></a></header>
+  <section class="showcase" data-showcase role="region" aria-roledescription="carousel" aria-label="GitHub 置顶项目展示" aria-describedby="showcase-help">
     <div class="showcase-stage">
       {projects.map((project, index) => <article class="showcase-slide" data-slide data-name={project.name} hidden={index !== 0} aria-hidden={index !== 0 ? 'true' : 'false'} role="group" aria-roledescription="slide" aria-label={`${index + 1} / ${projects.length}：${project.name}`}>
         <div class="showcase-copy"><p class="slide-eyebrow"><span>{String(index + 1).padStart(2, '0')}</span> / {project.category}</p><p class="slide-repository">{project.name}</p><h1>{project.titleLines.map(line => <span>{line}</span>)}</h1><p class="slide-tagline">{project.tagline}</p><p class="slide-description">{project.description}</p><div class="slide-stack">{project.stack.map(item => <span>{item}</span>)}</div><span class="showcase-enter">进入我的空间 <span>↗</span></span></div>
@@ -14,7 +13,8 @@ import { href } from '../data/paths';
       </article>)}
       <a class="stage-hitbox" href={href('blog/')} aria-label="进入 BK 的主页，了解全部项目和作者"></a>
     </div>
-    <footer class="showcase-footer"><div class="showcase-project-nav" aria-label="选择展示项目">{projects.map((project, index) => <button class="project-selector" data-select={index} data-url={project.url} aria-label={`展示 ${project.name}`} aria-pressed={index === 0 ? 'true' : 'false'}><span class="selector-number">{String(index + 1).padStart(2, '0')}</span><span class="selector-name">{project.name.replace('BK', '')}</span><span class="selector-track"><i></i></span></button>)}</div><div class="showcase-bottom"><span class="showcase-credit">© {new Date().getFullYear()} BK <span>/</span> SELECTED GITHUB PROJECTS</span><div class="playback-controls"><button data-prev aria-label="上一个项目">←</button><button data-play aria-label="暂停自动轮播" aria-pressed="false">Ⅱ</button><button data-next aria-label="下一个项目">→</button><span class="slide-counter" aria-hidden="true"><span data-current>01</span> / {String(projects.length).padStart(2, '0')}</span></div><a class="showcase-source" data-source href={projects[0].url} target="_blank" rel="noopener noreferrer">查看项目源码 ↗</a></div></footer>
+    <p class="sr-only" id="showcase-help">项目自动轮播。使用左右方向键切换，空格键暂停或继续，回车进入主页。</p>
+    <button class="sr-only showcase-pause" data-play aria-label="暂停自动轮播" aria-pressed="false">暂停自动轮播</button>
     <p class="sr-only" data-announcement aria-live="polite" aria-atomic="true"></p>
     <noscript><p class="showcase-noscript">浏览全部项目，请<a href={href('blog/')}>进入主页 →</a></p></noscript>
   </section>
@@ -22,10 +22,7 @@ import { href } from '../data/paths';
     const root = document.querySelector<HTMLElement>('[data-showcase]');
     if (root) {
       const slides = [...root.querySelectorAll<HTMLElement>('[data-slide]')];
-      const selectors = [...root.querySelectorAll<HTMLButtonElement>('[data-select]')];
       const play = root.querySelector<HTMLButtonElement>('[data-play]');
-      const source = root.querySelector<HTMLAnchorElement>('[data-source]');
-      const current = root.querySelector('[data-current]');
       const announcement = root.querySelector('[data-announcement]');
       const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
       const duration = 6500;
@@ -41,19 +38,12 @@ import { href } from '../data/paths';
           slide.hidden = position !== index;
           slide.setAttribute('aria-hidden', String(position !== index));
         });
-        selectors.forEach((selector, position) => {
-          selector.setAttribute('aria-pressed', String(position === index));
-          selector.style.setProperty('--progress', '0');
-        });
-        if (source) source.href = selectors[index].dataset.url || source.href;
-        if (current) current.textContent = String(index + 1).padStart(2, '0');
         if (announce && announcement) announcement.textContent = `正在展示 ${slides[index].dataset.name}，第 ${index + 1} 个，共 ${slides.length} 个项目`;
       }
       function tick(time: number) {
         if (lastTime) elapsed += time - lastTime;
         lastTime = time;
         if (elapsed >= duration) show(index + 1);
-        selectors[index].style.setProperty('--progress', String(Math.min(elapsed / duration, 1)));
         frame = requestAnimationFrame(tick);
       }
       function updatePlayback() {
@@ -61,15 +51,12 @@ import { href } from '../data/paths';
         lastTime = 0;
         root!.dataset.paused = String(paused || document.hidden);
         if (play) {
-          play.textContent = paused ? '▶' : 'Ⅱ';
+          play.textContent = paused ? '播放自动轮播' : '暂停自动轮播';
           play.setAttribute('aria-label', paused ? '播放自动轮播' : '暂停自动轮播');
           play.setAttribute('aria-pressed', String(paused));
         }
         if (!paused && !document.hidden && slides.length > 1) frame = requestAnimationFrame(tick);
       }
-      selectors.forEach((selector, position) => selector.addEventListener('click', () => show(position, true)));
-      root.querySelector('[data-prev]')?.addEventListener('click', () => show(index - 1, true));
-      root.querySelector('[data-next]')?.addEventListener('click', () => show(index + 1, true));
       play?.addEventListener('click', () => { paused = !paused; updatePlayback(); });
       root.addEventListener('focusin', event => {
         if (!(event.target instanceof Element) || event.target.closest('[data-play]')) return;
@@ -77,6 +64,11 @@ import { href } from '../data/paths';
         updatePlayback();
       });
       root.addEventListener('keydown', event => {
+        if (event.key === ' ' && !(event.target instanceof HTMLButtonElement)) {
+          event.preventDefault();
+          paused = !paused;
+          updatePlayback();
+        }
         if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
           event.preventDefault();
           paused = true;
