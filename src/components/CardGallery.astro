@@ -1,0 +1,53 @@
+---
+import type { ProjectImage } from '../data/site';
+import { href } from '../data/paths';
+interface Props { images: ProjectImage[]; visualClass?: string }
+const { images, visualClass } = Astro.props;
+---
+<div class:list={['project-visual', visualClass]} data-card-gallery={images.length > 1 ? '' : undefined} data-current="0">
+  {images.length ? images.map((image, index) => <img src={href(image.src)} alt={image.alt} data-active={index === 0 ? 'true' : 'false'} aria-hidden={index !== 0 ? 'true' : 'false'} loading="lazy" decoding="async" width="1280" height="840" />) : <slot/>}
+  {images.length > 1 && <div class="card-gallery-dots" aria-hidden="true">{images.map((_, index) => <span data-active={index === 0 ? 'true' : 'false'}></span>)}</div>}
+</div>
+
+<style>
+  [data-card-gallery] > img { position: absolute; inset: 0; opacity: 0; transition: opacity .55s ease; }
+  [data-card-gallery] > img[data-active="true"] { opacity: 1; }
+  .card-gallery-dots { position: absolute; z-index: 1; bottom: 12px; left: 50%; transform: translateX(-50%); display: flex; gap: 5px; padding: 6px 8px; border-radius: 20px; background: rgb(0 0 0 / 40%); pointer-events: none; }
+  .card-gallery-dots span { width: 4px; height: 4px; border-radius: 50%; background: rgb(255 255 255 / 35%); transition: background .3s; }
+  .card-gallery-dots span[data-active="true"] { background: #fff; }
+  @media (prefers-reduced-motion: reduce) { [data-card-gallery] > img { transition: none; } }
+</style>
+
+<script>
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const galleries = [...document.querySelectorAll<HTMLElement>('[data-card-gallery]')];
+  const visible = new Set<Element>();
+  const observer = new IntersectionObserver(entries => {
+    for (const entry of entries) {
+      if (entry.isIntersecting) visible.add(entry.target);
+      else visible.delete(entry.target);
+    }
+  }, { threshold: .15 });
+  galleries.forEach(gallery => observer.observe(gallery));
+  let advancing = false;
+  window.setInterval(async () => {
+    if (advancing || document.hidden || reduced.matches) return;
+    advancing = true;
+    try {
+      await Promise.all(galleries.map(async gallery => {
+        const card = gallery.closest('.project-card');
+        if (!visible.has(gallery) || card?.matches(':hover, :focus-within')) return;
+        const images = [...gallery.querySelectorAll<HTMLImageElement>('img')];
+        const next = (Number(gallery.dataset.current) + 1) % images.length;
+        try { await images[next].decode(); } catch { return; }
+        if (document.hidden || reduced.matches || !visible.has(gallery) || card?.matches(':hover, :focus-within')) return;
+        images.forEach((image, index) => {
+          image.dataset.active = String(index === next);
+          image.setAttribute('aria-hidden', String(index !== next));
+        });
+        gallery.querySelectorAll<HTMLElement>('.card-gallery-dots span').forEach((dot, index) => dot.dataset.active = String(index === next));
+        gallery.dataset.current = String(next);
+      }));
+    } finally { advancing = false; }
+  }, 4500);
+</script>

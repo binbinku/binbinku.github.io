@@ -1,5 +1,6 @@
 ---
 import AiUsageBadge from '../../components/AiUsageBadge.astro';
+import { projectArticleHref } from '../../data/project-articles';
 import Base from '../../layouts/Base.astro';
 import { personalProjects, personalProjectSource, type PersonalProject } from '../../data/personal-projects';
 import { href } from '../../data/paths';
@@ -17,6 +18,7 @@ const { project } = Astro.props;
       <h1>{project.name}</h1><div class="project-ai-usage"><AiUsageBadge projectId={project.id}/></div>
       <p>{project.description}</p>
     </header>
+    {projectArticleHref(project.id) && <div class="project-detail-actions" style="margin-bottom: 24px"><a class="button button-secondary" href={projectArticleHref(project.id)}>阅读项目介绍 <span>→</span></a></div>}
     <ul class="personal-stack" aria-label="项目技术">{project.stack.map(item => <li>{item}</li>)}</ul>
     <section class="personal-screenshots" aria-labelledby="screenshots-title">
       <h2 id="screenshots-title">项目截图</h2>

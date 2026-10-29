@@ -1,5 +1,6 @@
 ---
 import AiUsageBadge from '../../components/AiUsageBadge.astro';
+import { projectArticleHref } from '../../data/project-articles';
 import { getCollection, render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import { projects } from '../../data/site';
@@ -19,7 +20,7 @@ const toc = headings.filter(heading => heading.depth === 2 || heading.depth === 
 <Base title={project.name} description={project.description} active="projects">
   <div class="reading-masthead"><div class="container">
     <a class="back-link" href={href('projects/')}>← 全部开源项目</a>
-    <header class="article-heading"><p class="eyebrow">OPEN SOURCE / README</p><h1>{project.name}</h1><div class="project-ai-usage"><AiUsageBadge projectId={project.id}/></div><p>{project.description}</p><div class="project-detail-actions"><a class="button button-primary" href={project.url} target="_blank" rel="noopener noreferrer">查看源码 <span>↗</span></a><a class="section-link" href={readme.data.sourceUrl} target="_blank" rel="noopener noreferrer">原始 README <span>↗</span></a><span class="readme-date">资料同步于 {readme.data.syncedAt}</span></div></header>
+    <header class="article-heading"><p class="eyebrow">OPEN SOURCE / README</p><h1>{project.name}</h1><div class="project-ai-usage"><AiUsageBadge projectId={project.id}/></div><p>{project.description}</p><div class="project-detail-actions">{projectArticleHref(project.id) && <a class="button button-secondary" href={projectArticleHref(project.id)}>阅读项目介绍 <span>→</span></a>}<a class="button button-primary" href={project.url} target="_blank" rel="noopener noreferrer">查看源码 <span>↗</span></a><a class="section-link" href={readme.data.sourceUrl} target="_blank" rel="noopener noreferrer">原始 README <span>↗</span></a><span class="readme-date">资料同步于 {readme.data.syncedAt}</span></div></header>
   </div></div>
   <div class="container article-container"><div class:list={['article-grid', { 'readme-without-toc': !toc.length }]}>
     <article class="prose project-readme"><Content /></article>
