@@ -2,9 +2,12 @@
 import { videoProfile, videos } from '../data/videos';
 import { href, formatDate } from '../data/paths';
 import BilibiliIcon from './BilibiliIcon.astro';
+interface Props { standalone?: boolean }
+const { standalone = false } = Astro.props;
+const Heading = standalone ? 'h1' : 'h2';
 ---
-<section class="hub-videos" id="personal-videos" aria-labelledby="personal-videos-title" data-video-section data-video-complete={String(videoProfile.complete)}>
-  <header class="hub-heading"><p class="eyebrow">PERSONAL VIDEOS</p><div><h2 id="personal-videos-title">B站视频</h2><a class="section-link" href={videoProfile.url} target="_blank" rel="noopener noreferrer">B 站主页 <span>↗</span></a></div><p>开发日志、作品演示，还有一路上的探索。</p>{!videoProfile.complete && <p class="video-coverage">已收录 {videos.length} / {videoProfile.total} 个公开视频</p>}</header>
+<section class:list={['hub-videos', { 'video-page': standalone }]} id="personal-videos" aria-labelledby="personal-videos-title" data-video-section data-video-complete={String(videoProfile.complete)}>
+  <header class:list={['hub-heading', { 'page-heading': standalone }]}><p class="eyebrow">BILIBILI VIDEOS</p><div><Heading id="personal-videos-title">B站视频</Heading><a class="section-link" href={videoProfile.url} target="_blank" rel="noopener noreferrer">B 站主页 <span>↗</span></a></div><p>开发日志、作品演示，还有一路上的探索。</p>{!videoProfile.complete && <p class="video-coverage">已收录 {videos.length} / {videoProfile.total} 个公开视频</p>}</header>
   <div class="video-grid" id="personal-video-list">
     {videos.map((video, index) => <a class:list={['video-card', { 'video-card-extra': index >= 6 }]} href={video.url} target="_blank" rel="noopener noreferrer" data-video-card>
       <div class="video-cover"><img src={href(video.cover)} alt="" loading="lazy" decoding="async" width="640" height="360" /><span class="video-play" aria-hidden="true"><BilibiliIcon size={36}/></span><span class="video-duration"><span class="sr-only">时长 </span>{video.duration}</span></div>
@@ -19,6 +22,8 @@ import BilibiliIcon from './BilibiliIcon.astro';
   .hub-videos { --bilibili-pink: #fb7299; margin-top: 60px; }
   :global(html:not([data-theme='dark'])) .hub-videos { --bilibili-pink: #c92f63; }
   .video-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 20px; }
+  .hub-videos.video-page { margin-top: 0; }
+  .video-page .video-grid { grid-template-columns: repeat(3,minmax(0,1fr)); }
   .video-card { min-width: 0; display: block; overflow: hidden; background: var(--glass-project, var(--surface)); border: 1px solid var(--glass-rim, var(--line)); border-radius: 14px; transition: border-color .2s, box-shadow .2s; }
   .video-card:is(:hover, :focus-visible) { border-color: var(--bilibili-pink); box-shadow: 0 0 0 1px rgb(251 114 153 / 12%), 0 12px 32px rgb(251 114 153 / 9%); }
   .video-card:focus-visible { outline-color: var(--bilibili-pink); }
@@ -39,8 +44,9 @@ import BilibiliIcon from './BilibiliIcon.astro';
   .video-sentinel { height: 1px; pointer-events: none; }
   .video-more { font-size: 11px; min-height: 38px; background: var(--surface); }
   :global(.js) .video-card-extra { display: none; }
+  @media (max-width: 1000px) { .video-page .video-grid { grid-template-columns: repeat(2,minmax(0,1fr)); } }
   @media (max-width: 700px) { .hub-videos { margin-top: 42px; } }
-  @media (max-width: 480px) { .video-grid { grid-template-columns: minmax(0,1fr); } .video-body h3 { font-size: 14px; min-height: auto; } }
+  @media (max-width: 480px) { .video-grid, .video-page .video-grid { grid-template-columns: minmax(0,1fr); } .video-body h3 { font-size: 14px; min-height: auto; } }
   @media (hover: none) { .video-play { width: 48px; height: 48px; opacity: 1; transform: none; border-radius: 12px; background: #0009; } }
   @media (prefers-reduced-motion: reduce) { .video-card, .video-cover::after, .video-play { transition: none; } }
 </style>

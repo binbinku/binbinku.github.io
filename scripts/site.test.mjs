@@ -45,6 +45,11 @@ test('video coverage is accurately disclosed and all collected videos render wit
   }
   assert.equal([...home.matchAll(/data-video-card(?:\s|>)/g)].length, snapshot.videos.length);
   assert.ok(home.includes('data-video-more'), 'all videos are in HTML; JavaScript enhances the list with load more');
+  const archive = await readFile(join(dist, 'videos/index.html'), 'utf8');
+  assert.match(home, /<a href="\/videos\/"[^>]*>视频<\/a>/, 'home navigation links to the video page');
+  assert.match(archive, /<a href="\/videos\/"[^>]*aria-current="page"[^>]*>视频<\/a>/, 'video navigation marks the current page');
+  assert.match(archive, /<h1[^>]*id="personal-videos-title"[^>]*>B站视频<\/h1>/);
+  assert.equal([...archive.matchAll(/data-video-card(?:\s|>)/g)].length, snapshot.videos.length);
 });
 async function filesIn(directory) {
   const entries = await readdir(directory, { withFileTypes: true });
