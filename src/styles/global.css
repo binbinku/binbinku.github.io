@@ -121,7 +121,8 @@ h1, h2, h3, p { margin: 0; }
 
 /* Profile, pinned projects, and recent writing share one calm workspace. */
 .hub-page { width: min(1320px,calc(100% - 80px)); display: grid; grid-template-columns: 208px minmax(0,1fr) 224px; grid-template-areas: 'profile projects articles'; align-items: start; gap: 36px; padding-block: 58px 80px; min-height: calc(100svh - 150px); }
-.hub-profile { grid-area: profile; position: sticky; top: 108px; min-width: 0; }
+.hub-sidebar { grid-area: profile; position: sticky; top: 108px; min-width: 0; display: grid; gap: 16px; }
+.hub-profile { min-width: 0; }
 .hub-avatar { width: 88px; height: 88px; object-fit: cover; border-radius: 50%; margin-block: 27px 20px; }
 .hub-profile h1 { font-size: 29px; font-weight: 600; letter-spacing: -1px; line-height: 1.4; }
 .hub-handle { color: var(--subtle); font: 10px var(--mono); margin-top: 7px; }
@@ -511,7 +512,8 @@ h1, h2, h3, p { margin: 0; }
 }
 @media (max-width: 700px) {
   .hub-page { width: calc(100% - 40px); grid-template-columns: minmax(0,1fr); grid-template-areas: 'profile' 'projects' 'articles'; gap: 42px; padding-block: 30px 50px; }
-  .hub-profile { position: static; display: grid; grid-template-columns: 66px minmax(0,1fr); column-gap: 18px; }
+  .hub-sidebar { position: static; }
+  .hub-profile { display: grid; grid-template-columns: 66px minmax(0,1fr); column-gap: 18px; }
   .hub-profile > .eyebrow { grid-column: 1/-1; margin-bottom: 21px; }
   .hub-avatar { width: 66px; height: 66px; margin: 0; grid-column: 1; grid-row: 2/5; }
   .hub-profile h1, .hub-handle, .hub-role { grid-column: 2; }

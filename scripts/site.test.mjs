@@ -9,9 +9,161 @@ import { createShowcaseFrames } from '../src/data/showcase.ts';
 import { getProjectImages, projects } from '../src/data/site.ts';
 import { prepareReadme } from './project-readme-plugin.mjs';
 import { normalizeBilibiliVideos, normalizeBilibiliOpus, opusPublicationDate } from './bilibili.mjs';
+import { initVisitorAnalytics } from '../src/scripts/visitor-analytics.ts';
+import { getUptimeDays, siteLaunchedAt } from '../src/data/site-dates.ts';
 
 const root = resolve(import.meta.dirname, '..');
 const dist = join(root, 'dist');
+
+// Browser boundary doubles: the real initializer runs, but no external script is executed.
+function visitorBrowser({ hostname = 'binbinku.github.io', hasPanel = true } = {}) {
+  const nodes = new Map();
+  for (const id of ['busuanzi_site_uv', 'busuanzi_today_uv', 'busuanzi_site_pv']) nodes.set(id, { textContent: '' });
+  const total = { textContent: '—' };
+  const today = { textContent: '—' };
+  const pageviews = { textContent: '—' };
+  const status = { textContent: '' };
+  const source = {};
+  const panel = { dataset: { state: 'loading' }, querySelector: selector => ({
+    '[data-visitor-status]': status, '[data-visitor-source]': source,
+    '[data-visitor-total]': total, '[data-visitor-today]': today, '[data-visitor-pageviews]': pageviews,
+  })[selector] };
+  const scripts = [];
+  const timers = new Map();
+  let observer;
+  const browser = {
+    location: { hostname },
+    document: {
+      querySelector: () => hasPanel ? panel : null,
+      getElementById: id => nodes.get(id) || scripts.find(script => script.id === id),
+      createElement: () => ({}),
+      body: { append: script => scripts.push(script) },
+    },
+    MutationObserver: class {
+      constructor(callback) { this.callback = callback; observer = this; }
+      observe() { this.connected = true; }
+      disconnect() { this.connected = false; }
+    },
+    setTimeout(callback, delay) { const id = timers.size + 1; timers.set(id, { callback, delay }); return id; },
+    clearTimeout(id) { timers.delete(id); },
+  };
+  return {
+    browser, panel, total, today, pageviews, status, scripts, timers,
+    respond(totalValue, todayValue, pageviewValue = '2000') {
+      nodes.get('busuanzi_site_uv').textContent = totalValue;
+      nodes.get('busuanzi_today_uv').textContent = todayValue;
+      nodes.get('busuanzi_site_pv').textContent = pageviewValue;
+      observer.callback();
+    },
+    timeout() { for (const timer of [...timers.values()]) timer.callback(); },
+  };
+}
+
+test('visitor collection only runs once on the production hostname, including pages without a panel', () => {
+  for (const hostname of ['127.0.0.1', 'localhost', 'preview.example.com', 'binbinku.github.io.example.com']) {
+    const state = visitorBrowser({ hostname });
+    initVisitorAnalytics(true, state.browser);
+    assert.equal(state.scripts.length, 0);
+    assert.equal(state.panel.dataset.state, 'preview');
+    assert.equal(state.total.textContent, '—');
+    assert.equal(state.status.textContent, '本地预览不计数');
+  }
+  const dev = visitorBrowser();
+  initVisitorAnalytics(false, dev.browser);
+  assert.equal(dev.scripts.length, 0, 'development builds never report, even on the production hostname');
+  for (const hasPanel of [true, false]) {
+    const state = visitorBrowser({ hasPanel });
+    initVisitorAnalytics(true, state.browser);
+    initVisitorAnalytics(true, state.browser);
+    assert.equal(state.scripts.length, 1);
+    assert.equal(state.scripts[0].src, 'https://cdn.busuanzi.cc/busuanzi/3.6.9/busuanzi.min.js');
+    assert.equal(state.scripts[0].async, true);
+    assert.equal(state.timers.size, hasPanel ? 1 : 0);
+  }
+});
+
+test('visitor panel displays genuine zero values, keeps placeholders on failures and accepts late responses', () => {
+  const success = visitorBrowser();
+  initVisitorAnalytics(true, success.browser);
+  success.respond('1234', '0');
+  assert.equal(success.total.textContent, '1,234');
+  assert.equal(success.today.textContent, '0');
+  assert.equal(success.pageviews.textContent, '2,000');
+  assert.equal(success.panel.dataset.state, 'ready');
+  assert.equal(success.timers.size, 0);
+
+  const slow = visitorBrowser();
+  initVisitorAnalytics(true, slow.browser);
+  assert.equal([...slow.timers.values()][0].delay, 10_000);
+  slow.respond('1234', '');
+  assert.equal(slow.total.textContent, '—', 'partial results must not create a misleading pair');
+  slow.timeout();
+  assert.equal(slow.status.textContent, '统计暂不可用');
+  assert.equal(slow.total.textContent, '—');
+  slow.respond('1234', '7');
+  assert.equal(slow.panel.dataset.state, 'ready');
+  assert.equal(slow.today.textContent, '7');
+
+  const failed = visitorBrowser();
+  initVisitorAnalytics(true, failed.browser);
+  failed.scripts[0].onerror();
+  assert.equal(failed.panel.dataset.state, 'unavailable');
+  assert.equal(failed.status.textContent, '统计暂不可用');
+  assert.equal(failed.today.textContent, '—');
+  failed.respond('0', '0', '0');
+  assert.equal(failed.panel.dataset.state, 'ready');
+  assert.equal(failed.pageviews.textContent, '0');
+
+  const malformed = visitorBrowser();
+  initVisitorAnalytics(true, malformed.browser);
+  for (const value of ['NaN', '-1', '1.5', '9007199254740992', '']) {
+    malformed.respond(value, '2');
+    assert.equal(malformed.total.textContent, '—');
+  }
+  malformed.timeout();
+  assert.equal(malformed.panel.dataset.state, 'unavailable');
+
+  const missingViews = visitorBrowser();
+  initVisitorAnalytics(true, missingViews.browser);
+  missingViews.respond('5', '2', '');
+  assert.equal(missingViews.total.textContent, '—');
+  missingViews.timeout();
+  assert.equal(missingViews.pageviews.textContent, '—');
+  missingViews.respond('5', '2', '12');
+  assert.equal(missingViews.pageviews.textContent, '12');
+});
+
+test('site uptime changes on Shanghai midnight, not the viewer timezone or a new build', () => {
+  assert.equal(siteLaunchedAt, '2026-10-29T00:00:00+08:00');
+  assert.equal(getUptimeDays(Date.parse('2026-10-28T15:59:59Z')), 0);
+  assert.equal(getUptimeDays(Date.parse('2026-10-29T15:59:59Z')), 0);
+  assert.equal(getUptimeDays(Date.parse('2026-10-29T16:00:00Z')), 1);
+  assert.equal(getUptimeDays(Date.parse('2026-10-30T16:00:00Z')), 2);
+});
+
+test('all normal pages contain one analytics marker; only the home has the separate visitor panel', async () => {
+  for (const file of (await filesIn(dist)).filter(file => file.endsWith('.html'))) {
+    const html = await readFile(file, 'utf8');
+    assert.equal([...html.matchAll(/data-visitor-analytics(?:\s|>)/g)].length, file.endsWith('/404.html') ? 0 : 1, file);
+    assert.equal([...html.matchAll(/data-visitor-stats(?:\s|>)/g)].length, file === join(dist, 'blog/index.html') ? 1 : 0, file);
+    assert.ok(!html.includes('<script src="https://cdn.busuanzi.cc'), 'the runtime hostname gate must run before loading the collector');
+  }
+  const home = await readFile(join(dist, 'blog/index.html'), 'utf8');
+  assert.ok(home.indexOf('class="hub-profile"') < home.indexOf('data-visitor-stats'));
+  assert.ok(home.indexOf('data-visitor-stats') < home.indexOf('class="hub-main"'));
+  assert.ok(home.includes('累计访客') && home.includes('今日访客') && home.includes('自接入起统计'));
+  assert.ok(home.includes('启用 JavaScript 后可查看统计'));
+  assert.ok(home.includes('data-production="true"'));
+  const publishedPosts = (await readdir(join(dist, 'blog'), { withFileTypes: true })).filter(entry => entry.isDirectory()).length;
+  assert.match(home, new RegExp(`<dt>文章</dt><dd><a[^>]*>${publishedPosts}</a>`));
+  assert.match(home, new RegExp(`<dt>开源项目</dt><dd><a[^>]*>${projects.length}</a>`));
+  assert.match(home, /<dt>个人项目<\/dt><dd><a[^>]*>2<\/a>/);
+  const videos = JSON.parse(await readFile(join(root, 'src/data/videos.json'), 'utf8'));
+  assert.match(home, new RegExp(`<dt>B站视频</dt><dd><a[^>]*>${videos.videos.length}/${videos.total}</a>`));
+  assert.match(home, /<dt>B站图文<\/dt><dd><a[^>]*>48<\/a>/);
+  const updatedAt = execFileSync('git', ['log', '-1', '--format=%cI'], { cwd: root, encoding: 'utf8' }).trim();
+  assert.ok(home.includes(`datetime="${updatedAt}" title="当前版本的 Git 提交日期"`));
+});
 
 test('video import rejects incomplete lists, wrong owners and unexpected cover hosts', () => {
   const video = { mid: 172571118, bvid: 'BV19remzbEBu', title: '测试视频', created: 1756308156, length: '02:38', pic: 'http://i1.hdslb.com/bfs/archive/cover.jpg' };
@@ -161,6 +313,9 @@ test('adding Markdown generates dated lists, encoded tag archives, adjacent link
     const listing = await readFile(join(built, 'writing/index.html'), 'utf8');
     assert.ok(listing.indexOf('新文章验收') < listing.indexOf('旧文章验收'), 'newest first');
     assert.ok(!listing.includes('不可公开的草稿'));
+    const home = await readFile(join(built, 'blog/index.html'), 'utf8');
+    const articleCount = (await readdir(join(built, 'blog'), { withFileTypes: true })).filter(entry => entry.isDirectory()).length;
+    assert.match(home, new RegExp(`<dt>文章</dt><dd><a[^>]*>${articleCount}</a>`), 'content counter excludes drafts and follows new articles');
     assert.match(listing, /src="\/_astro\/workspace[^\"]+\.svg"/, 'custom cover is generated with the deployment base');
     const older = await readFile(join(built, 'blog/fixture-old/index.html'), 'utf8');
     const newer = await readFile(join(built, 'blog/fixture-new/index.html'), 'utf8');

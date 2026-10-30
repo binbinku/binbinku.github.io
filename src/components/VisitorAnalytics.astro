@@ -1,0 +1,6 @@
+<span hidden data-visitor-analytics data-production={String(import.meta.env.PROD)}></span>
+<script>
+  import { initVisitorAnalytics } from '../scripts/visitor-analytics';
+  const marker = document.querySelector('[data-visitor-analytics]');
+  if (marker) initVisitorAnalytics(marker.getAttribute('data-production') === 'true');
+</script>

@@ -5,6 +5,7 @@ import ProjectCard from '../../components/ProjectCard.astro';
 import PersonalProjectCard from '../../components/PersonalProjectCard.astro';
 import PersonalVideos from '../../components/PersonalVideos.astro';
 import PersonalOpus from '../../components/PersonalOpus.astro';
+import VisitorStats from '../../components/VisitorStats.astro';
 import { personalProjects } from '../../data/personal-projects';
 import Icon from '../../components/Icon.astro';
 import { profile, projects } from '../../data/site';
@@ -14,6 +15,7 @@ const posts = await getPosts();
 ---
 <Base title="主页" active="home" ambient>
   <div class="container hub-page">
+    <div class="hub-sidebar" tabindex="0" role="region" aria-label="个人信息与访客统计">
     <aside class="hub-profile" aria-labelledby="profile-name">
       <p class="eyebrow">THE BUILDER</p>
       <img class="hub-avatar" src={profile.avatar} alt="BK 的 GitHub 头像" width="96" height="96" />
@@ -24,6 +26,8 @@ const posts = await getPosts();
       <a class="button button-secondary hub-github" href={profile.github} target="_blank" rel="noopener noreferrer"><Icon name="github" size={16}/>GitHub<span>↗</span></a>
       <div class="hub-profile-links"><a href={href('about/')}>更多关于我 <span>→</span></a><a href={href()}>作品放映 <span>↗</span></a></div>
     </aside>
+    <VisitorStats articleCount={posts.length}/>
+    </div>
     <div class="hub-main">
     <section aria-labelledby="projects-title">
       <header class="hub-heading"><p class="eyebrow">PINNED ON GITHUB</p><div><h2 id="projects-title">开源项目</h2><a class="section-link" href={href('projects/')}>全部项目 <span>↗</span></a></div><p>把日常问题，做成实用工具。</p></header>

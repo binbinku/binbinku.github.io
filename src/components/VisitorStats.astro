@@ -1,0 +1,57 @@
+---
+import { execFileSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
+import { projects } from '../data/site';
+import { personalProjects } from '../data/personal-projects';
+import { videos, videoProfile } from '../data/videos';
+import { opusPosts } from '../data/bilibili-opus';
+import { getUptimeDays } from '../data/site-dates';
+import { formatDate, href } from '../data/paths';
+interface Props { articleCount: number }
+const { articleCount } = Astro.props;
+let updatedAt: string | undefined;
+try {
+  const timestamp = execFileSync('git', ['log', '-1', '--format=%cI'], {
+    cwd: fileURLToPath(new URL('../../', import.meta.url)), encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'],
+  }).trim();
+  if (Number.isFinite(Date.parse(timestamp))) updatedAt = timestamp;
+} catch { /* Source archives may not include Git history; never invent an update date. */ }
+const contentCounts = [
+  { label: '开源项目', value: projects.length, url: href('projects/') },
+  { label: '个人项目', value: personalProjects.length, url: href('blog/#personal-projects') },
+  { label: '文章', value: articleCount, url: href('writing/') },
+  { label: 'B站视频', value: videoProfile.complete ? videos.length : `${videos.length}/${videoProfile.total}`, url: href('videos/'), title: videoProfile.complete ? undefined : `本站已收录 ${videos.length} / ${videoProfile.total} 个公开视频` },
+  { label: 'B站图文', value: opusPosts.length, url: href('opus/') },
+];
+---
+<section class="visitor-stats" data-visitor-stats data-state="loading" aria-labelledby="visitor-stats-title">
+  <h2 id="visitor-stats-title">站点统计</h2>
+  <dl class="visitor-metrics">
+    <div><dt>累计访客</dt><dd><span data-visitor-total>—</span></dd></div>
+    <div><dt>今日访客</dt><dd><span data-visitor-today>—</span></dd></div>
+  </dl>
+  <dl class="site-detail-metrics">
+    <div><dt>累计浏览</dt><dd><span data-visitor-pageviews>—</span><span class="visitor-unit">次</span></dd></div>
+    <div><dt>运行天数</dt><dd title="自 2026.10.29 上线起，按北京时间自然日计算"><span data-site-uptime>{getUptimeDays()}</span><span class="visitor-unit">天</span></dd></div>
+    <div><dt>最近更新</dt><dd>{updatedAt ? <time datetime={updatedAt} title="当前版本的 Git 提交日期">{formatDate(new Date(updatedAt))}</time> : '—'}</dd></div>
+  </dl>
+  <dl class="site-content-counts" aria-label="已收录作品与内容">
+    {contentCounts.map(item => <div><dt>{item.label}</dt><dd><a href={item.url} title={item.title}>{item.value}</a></dd></div>)}
+  </dl>
+  <p class="visitor-since" title="访客和浏览数据自接入起统计；访客去重和今日的日界遵循统计服务规则，不代表跨设备识别的自然人数。">访问数据自接入起统计</p>
+  <p class="visitor-status" data-visitor-status role="status" aria-live="polite"></p>
+  <noscript><p class="visitor-noscript">启用 JavaScript 后可查看统计</p></noscript>
+  <div hidden data-visitor-source><span id="busuanzi_site_uv"></span><span id="busuanzi_today_uv"></span><span id="busuanzi_site_pv"></span></div>
+</section>
+
+<script>
+  import { getUptimeDays } from '../data/site-dates';
+  const uptime = document.querySelector('[data-site-uptime]');
+  const updateUptime = () => { if (uptime) uptime.textContent = String(getUptimeDays()); };
+  updateUptime();
+  if (uptime) {
+    // Keep long-lived tabs correct across midnight without a reload or network request.
+    window.setInterval(updateUptime, 60_000);
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) updateUptime(); });
+  }
+</script>

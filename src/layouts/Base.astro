@@ -4,6 +4,7 @@ import { profile } from '../data/site';
 import { href } from '../data/paths';
 import Icon from '../components/Icon.astro';
 import CodeBackdrop from '../components/CodeBackdrop.astro';
+import VisitorAnalytics from '../components/VisitorAnalytics.astro';
 interface Props { title?: string; description?: string; active?: string; noindex?: boolean; immersive?: boolean; ambient?: boolean; rain?: boolean }
 const { title, description = profile.description, active = '', noindex = false, immersive = false, ambient = false, rain = false } = Astro.props;
 const navigation = [
@@ -67,6 +68,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
       <div class="footer-left"><a class="footer-brand" href={href('blog/')}>bk<span>.</span></a><span>保持好奇，持续构建。</span></div>
       <div class="footer-right"><span>© {new Date().getFullYear()} BK</span><span class="footer-dot">·</span><a href="https://astro.build" target="_blank" rel="noopener noreferrer">Built with Astro</a><a href={profile.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub（新窗口）"><Icon name="github" size={16}/></a></div>
     </footer>}
+    {!noindex && <VisitorAnalytics/>}
     <script>
       const themeButton = document.querySelector<HTMLButtonElement>('.theme-toggle');
       function updateThemeLabel() {
